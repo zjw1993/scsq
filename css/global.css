@@ -1,0 +1,16 @@
+.admin-content-header{width: 100%;}
+
+
+.admin-content-search{width: 100%; padding: 10px 20px; border-bottom: 1px solid #ECECEC;}
+.admin-content-search input:focus{outline: none; border-color: #CCCCCC; box-shadow: 0 0 0px rgba(0, 0, 0, 0); }
+.admin-content-search .btn-search{color: #fff; background-color: #1aa094; border-color: #1aa094;}
+
+.admin-content-toolbar{width: 100%; padding: 3px 20px; background-color: #ECECEC;}
+.admin-content-toolbar button{margin: 0 8px 0 0}
+.admin-content-toolbar .btn{color: #7f7777;}
+
+.admin-content-body{padding: 10px 20px;}
+
+.admin-content-body table input[type='checkbox']{cursor: pointer;}
+
+/*.fixed-table-container{border-bottom: none;}*/
