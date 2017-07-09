@@ -1,20 +1,35 @@
 .admin-content-header{width: 100%;}
 
-
+/* 搜索栏 */
 .admin-content-search{width: 100%; padding: 10px 20px; border-bottom: 1px solid #ECECEC;}
+/* 搜索栏文本框样式调整 */
 .admin-content-search input:focus{outline: none; border-color: #CCCCCC; box-shadow: 0 0 0px rgba(0, 0, 0, 0); }
+/* 修改搜索栏提交按钮样式 */
 .admin-content-search .btn-search{color: #fff; background-color: #1aa094; border-color: #1aa094;}
 
+/* toolbar */
 .admin-content-toolbar{width: 100%; padding: 3px 20px; background-color: #ECECEC;}
+
+/* 修改toolbar按钮样式 */
 .admin-content-toolbar button{margin: 0 8px 0 0}
 .admin-content-toolbar .btn{color: #7f7777;}
 
+/* 内容板块内边距 */
 .admin-content-body{padding: 10px 20px;}
 
+/* 表格checkbox鼠标放上去显示手型 */
 .admin-content-body table input[type='checkbox']{cursor: pointer;}
+.admin-content-body .table{border-bottom: none;}
 
+/* 去掉table加载完成的时候底部分页栏边框 */
+.fixed-table-toolbar:after, .fixed-table-pagination:after{clear: none;}
 /*.fixed-table-container{border-bottom: none;}*/
 
+/* 分页部分  每页数量选择按钮样式调整 */
+.page-list .btn{padding: 0 10px;}
 
 
-.layui-layer-content{padding: 10px 15px;}
+
+
+/* layer弹层主体部分上边距 */
+.layui-layer-content{padding-top: 10px;}

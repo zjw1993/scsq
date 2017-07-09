@@ -1,10 +1,12 @@
 Admin.user = function(){
 
+	var $table = $('#table');
+
 	var _this = {
 		initSearch: function(){
 			$(".admin-content-search .btn-search").bind('click', function(){
 				console.log("search btn click...")
-				$('#table').bootstrapTable('refresh');
+				$table.bootstrapTable('refresh');
 			});
 		},
 		
@@ -14,19 +16,19 @@ Admin.user = function(){
 			parameters.mobile = $(".admin-content-search input[name='mobile']").val();
 			parameters.email = $(".admin-content-search input[name='email']").val();
 			
-			/*Admin.ajaxJson(Admin.SERVER_URL + "/user/dataList.do", parameters, function(data){
-				params.success(data)
-			});*/
-			Admin.ajaxJson(Admin.STATIC_URL + "/datas/pageList.json", parameters, function(data){
+			Admin.ajaxJson(Admin.SERVER_URL + "/user/dataList.do", parameters, function(data){
 				params.success(data)
 			});
+			/*Admin.ajaxJson(Admin.STATIC_URL + "/datas/pageList.json", parameters, function(data){
+				params.success(data)
+			});*/
 		},
 		
 		initTable: function(){
-			$('#table').bootstrapTable({
+			$table.bootstrapTable({
 				ajax: _this.getData,    	// 自定义ajax获取数据
 				undefinedText: "未知",   	// undefined字段默认显示
-				striped: true,				// 隔行变色效果
+				striped: false,				// 隔行变色效果
 				pagination: true,			// 显示分页
 				paginationVAlign: "bottom", // 分页条显示位置
 				sidePagination: "server",	// 分页数据来源  server服务器
@@ -39,7 +41,7 @@ Admin.user = function(){
 				clickToSelect: true,		// 单击选中该行
 				singleSelect: false,		// 单选
 				checkboxHeader: true,		// 列头全选按钮
-				maintainSelected: true,		// 在点击分页按钮或搜索按钮时，将记住checkbox的选择项
+				//maintainSelected: true,		// 在点击分页按钮或搜索按钮时，将记住checkbox的选择项
 				silentSort: true,			// 点击分页按钮时，记住排序
 				detailView: true,
 				detailFormatter: function(index, row){
@@ -51,16 +53,23 @@ Admin.user = function(){
 			        checkbox: true
 			    }, {
 			        field: 'id',
-			        title: 'ID'
+			        title: 'ID',
+			        width: '100px',
+			        align: 'center'
 			    }, {
 			        field: 'userName',
-			        title: 'userName'
+			        title: 'userName',
+			        width: '100px',
+			        align: 'center'
 			    }, {
 			        field: 'userType',
-			        title: 'userType'
+			        title: 'userType',
+			        width: '100px',
+			        align: 'center'
 			    }, {
 			        field: 'realName',
-			        title: 'realName'
+			        title: 'realName',
+			        align: 'center'
 			    }]
 			    
 			});
@@ -75,9 +84,25 @@ Admin.user = function(){
 					  layer.open({
 						  type: 1,
 						  title: "添加用户",
-						  area: ['500px', '400px'],
+						  area: ['500px', '340px'],
 						  shadeClose: false, //点击遮罩关闭
-						  content: $("#add-panel-templet").text()
+						  content: $("#edit-panel-templet").text(),
+						  btnAlign: 'r',
+						  btn: ['保存'],
+						  yes:function(index, layero){
+						  	  var $form = $(layero).find("form");
+						      var param = $form.serialize();
+						      Admin.ajaxJson(Admin.SERVER_URL + "/user/save.do", param, function(data){
+						      	  if(data.success) {
+						      	  	  Admin.alert("提示", data.msg, 1, function(){
+						      	  	  	  layer.close(index);
+						      	  	  	  $table.bootstrapTable("refresh");
+						      	  	  });
+						      	  }
+						      });
+						      
+						    
+						  }
 					  });
 				}
 			},
@@ -86,7 +111,8 @@ Admin.user = function(){
 				icon: "edit",
 				btnType: "btnEdit",
 				handler: function(){
-					Admin.alert("",JSON.stringify($('#table').bootstrapTable('getSelections')))
+					var row = Admin.checkSingleRow($table);
+					console.log("123123132313")
 				}
 			},
 			{

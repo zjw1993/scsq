@@ -28,11 +28,11 @@ var Admin = {
 			 		if(!Admin.checkLogin(data)){
 			 			return false;
 			 		}else{
-				 		Admin.alert('提示', data.msg || "请求出现异常,请联系管理员", 'error');
+				 		Admin.alert('提示', data.msg || "请求出现异常,请联系管理员", 2);
 				 	}
 		 		}catch(e){
 		 			console.info(e);
-		 			Admin.alert('提示', "请求出现异常,请联系管理员.", 'error');
+		 			Admin.alert('提示', "请求出现异常,请联系管理员.", 2);
 		 		}
 		 	},
 		 	complete:function(){
@@ -57,7 +57,7 @@ var Admin = {
 		 			Admin.closeProgress();
 		 		}catch(e){
 		 			console.info(e);
-		 			Admin.alert('提示', "请求出现异常,请联系管理员.", 'error');
+		 			Admin.alert('提示', "请求出现异常,请联系管理员.", 2);
 		 		}
 		 	},
 		 	complete:function(){
@@ -73,7 +73,7 @@ var Admin = {
 	checkLogin: function(data) { //检查是否登录超时
 		if(data.logoutFlag){
 			Admin.closeProgress();
-			Admin.alert('提示', "登录超时,点击确定重新登录.", 'error', Admin.toLogin);
+			Admin.alert('提示', "登录超时,点击确定重新登录.", 2, Admin.toLogin);
 			return false;
 		}
 		return true;
@@ -81,11 +81,11 @@ var Admin = {
 	
 	alert: function(title, msg, icon, callback){
 		if($.isFunction(callback)){
-		 	layer.alert(msg, {title: title, icon: 6}, function(){
+		 	layer.alert(msg, {title: title||'提示', icon: icon||1}, function(){
 				callback();
 			});
  		}else{
- 			layer.alert(msg, {title: title, icon: 6});
+ 			layer.alert(msg, {title: title||'提示', icon: icon||1});
  		}
 	},
 	
@@ -99,5 +99,41 @@ var Admin = {
 	closeProgress:function(){
 		layer.close(layer.index);
 	},
+	
+	/**
+	 * 检查已选择一行并且只能是一行数据， 成功则执行回调
+	 * @param {Object} $table
+	 * @param {Object} callback
+	 */
+	checkSingleRow: function($table, callback){
+		var row = $table.bootstrapTable('getSelections');
+		if(!row.length){
+			Admin.alert("温馨提示", "请先选择要操作的数据", 7);
+			return false;
+		}
+		if(row.length > 1){
+			Admin.alert("温馨提示", "一次只能选择一行", 7);
+			return false;
+		}
+		if($.isFunction(callback)){
+			callback(row);
+		}
+	},
+	
+	/**
+	 * 检查是否选择一行或者一行以上的数据， 成功则执行回调
+	 * @param {Object} $table
+	 * @param {Object} callback
+	 */
+	checkSelectRows: function($table, callback){
+		var row = $table.bootstrapTable('getSelections');
+		if(!row.length){
+			Admin.alert("温馨提示", "请至少选择一行", 7);
+			return false;
+		}
+		if($.isFunction(callback)){
+			callback(row);
+		}
+	}
 	
 }
