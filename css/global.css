@@ -14,3 +14,7 @@
 .admin-content-body table input[type='checkbox']{cursor: pointer;}
 
 /*.fixed-table-container{border-bottom: none;}*/
+
+
+
+.layui-layer-content{padding: 10px 15px;}
