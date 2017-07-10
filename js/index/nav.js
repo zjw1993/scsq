@@ -9,15 +9,15 @@ var navs = [
 				"icon": "&#xe641;",
 				"href": "sys/user.html"
 			}, {
+				"title": "菜单管理",
+				"icon": "&#xe641;",
+				"href": "sys/menu.html"
+			}, {
 				"title": "角色管理",
 				"icon": "&#xe641;",
 				"href": ""
 			}, {
 				"title": "用户角色管理",
-				"icon": "&#xe641;",
-				"href": ""
-			}, {
-				"title": "菜单管理",
 				"icon": "&#xe641;",
 				"href": ""
 			}

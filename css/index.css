@@ -12,7 +12,7 @@
 .site-tree{width: 220px; min-height: 900px; padding: 5px 0 20px;}
 .site-content{width: 899px; min-height: 900px; padding: 20px 0 10px 20px;}
 
-/* 头部 */admin-side-toggle
+/* 头部 */
 .header{height: 65px; border-bottom: 1px solid #404553;  background-color: #393D49; color: #fff;}
 .logo{position: absolute; left: 0; top: 15px;}
 .logo img{width: 82px; height: 31px;}
@@ -337,12 +337,12 @@ body .site-demo-nav .layui-nav-item{line-height: 40px}
     text-align: center;
     width: 30px;
     height: 30px;
-    background-color: #1AA094;
+    background-color: #939898;
     line-height: 30px;
     top: 25%;
 }
 .admin-side-toggle:hover{
-	background-color: #5FB878;
+	background-color: #aab3b3;
 }
 .admin-side-full{
 	left: 240px;

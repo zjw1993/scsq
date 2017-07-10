@@ -20,7 +20,7 @@ var Page = {
 	initToolbar: function(toolbar){
 		//var _url = Admin.SERVER_URL + "/sys/getActionBtn.do";
 		var _url = Admin.STATIC_URL + "/datas/getActionBtn.json";
-		console.log(window.location.href)
+		//console.log(window.location.href)
 		var _data = {'url': window.location.href};
 		
 		var newBars = [];
@@ -35,18 +35,18 @@ var Page = {
 							newBars.push({name:item.name, icon:item.icon, btnType:"admin-toolbar-btn"+index, handler:item.handler});
 						}
 					});
-					Page.showToolbar(newBars);
+//					Page.showToolbar(newBars);
 					
 				}else{
-					Page.showToolbar(newBars);
+//					Page.showToolbar(newBars);
 					Admin.alert('提示', data.msg);
 				}
 		 	},
 		 	error: function(response, textStatus, errorThrown){
-		 		Page.showToolbar(newBars);
+//		 		Page.showToolbar(newBars);
 		 	},
 		 	complete:function(){
-		 		
+		 		Page.showToolbar(newBars);
 		 	}
 		});
 	},
@@ -86,7 +86,6 @@ var Page = {
 			}
 		}
 		$.each(toolbar, function(index, item){
-			//console.log($(item.btnType))
 			$("#"+item.btnType).click(function(){
 				item.handler();
 			});

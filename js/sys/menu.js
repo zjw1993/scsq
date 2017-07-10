@@ -1,5 +1,10 @@
-Admin.user = function(){
+Admin.menu = function(){
 
+	var dataListUrl = Admin.SERVER_URL + "/menu/dataList.do";
+	var saveUrl = Admin.SERVER_URL + "/menu/save.do";
+	var editUrl = Admin.SERVER_URL + "/menu/edit.do";
+	var deleteUrl = Admin.SERVER_URL + "/menu/delete.do";
+	
 	var $table = $('#table');
 
 	var _this = {
@@ -11,11 +16,10 @@ Admin.user = function(){
 		
 		getData : function(params){
 			var parameters = params.data;
-			parameters.userName = $(".admin-content-search input[name='userName']").val();
-			parameters.mobile = $(".admin-content-search input[name='mobile']").val();
-			parameters.email = $(".admin-content-search input[name='email']").val();
+			parameters.name = $(".admin-content-search input[name='name']").val();
+			parameters.type = $(".admin-content-search select[name='type']").val();
 			
-			Admin.ajaxJson(Admin.SERVER_URL + "/user/dataList.do", parameters, function(data){
+			Admin.ajaxJson(dataListUrl, parameters, function(data){
 				params.success(data)
 			});
 		},
@@ -23,7 +27,7 @@ Admin.user = function(){
 		initTable: function(){
 			$table.bootstrapTable({
 				ajax: _this.getData,    	// 自定义ajax获取数据
-				undefinedText: "未知",   		// undefined字段默认显示
+				undefinedText: "-",   		// undefined字段默认显示
 				striped: false,				// 隔行变色效果
 				pagination: true,			// 显示分页
 				paginationVAlign: "bottom", // 分页条显示位置
@@ -37,12 +41,11 @@ Admin.user = function(){
 				clickToSelect: true,		// 单击选中该行
 				singleSelect: false,		// 单选
 				checkboxHeader: true,		// 列头全选按钮
-				//maintainSelected: true,	// 在点击分页按钮或搜索按钮时，将记住checkbox的选择项
 				silentSort: true,			// 点击分页按钮时，记住排序
 				detailView: true,
-				detailFormatter: function(index, row){
+				/*detailFormatter: function(index, row){
 					return row.userName + "</br>" + row.mobile;
-				},
+				},*/
 			    columns: [{
 			        field: '',
 			        title: '',
@@ -53,31 +56,31 @@ Admin.user = function(){
 			        width: '100px',
 			        align: 'center'
 			    }, {
-			        field: 'userName',
-			        title: 'userName',
+			        field: 'name',
+			        title: 'name',
 			        width: '100px',
 			        align: 'center'
 			    }, {
-			        field: 'password',
-			        title: 'password',
+			        field: 'url',
+			        title: 'url',
 			        width: '200px',
 			        align: 'center'
 			    }, {
-			        field: 'email',
-			        title: 'email',
+			        field: 'parentId',
+			        title: 'parentId',
 			        width: '100px',
 			        align: 'center'
 			    }, {
-			        field: 'mobile',
-			        title: 'mobile',
+			        field: 'actions',
+			        title: 'actions',
 			        align: 'center'
 			    }, {
-			        field: 'realName',
-			        title: 'realName',
+			        field: 'type',
+			        title: 'type',
 			        align: 'center'
 			    }, {
-			        field: 'status',
-			        title: 'status',
+			        field: 'rank',
+			        title: 'rank',
 			        width: '',
 			        align: 'center',
 			        formatter: function(val){
@@ -114,7 +117,7 @@ Admin.user = function(){
 						  yes:function(index, layero){
 						  	  var $form = $(layero).find("form");
 						      var param = $form.serialize();
-						      Admin.ajaxJson(Admin.SERVER_URL + "/user/save.do", param, function(data){
+						      Admin.ajaxJson(saveUrl , param, function(data){
 						      	  if(data.success) {
 						      	  	  Admin.alert("提示", data.msg, 1, function(){
 						      	  	  	  layer.close(index);
@@ -149,7 +152,7 @@ Admin.user = function(){
 						  	yes:function(index, layero){
 						  	  	var $form = $(layero).find("form");
 						      	var param = $form.serialize();
-						      	Admin.ajaxJson(Admin.SERVER_URL + "/user/edit.do", param, function(data){
+						      	Admin.ajaxJson(editUrl, param, function(data){
 						      	  	if(data.success) {
 						      	  	  	Admin.alert("提示", data.msg, 1, function(){
 						      	  	  	  	layer.close(index);
@@ -173,7 +176,7 @@ Admin.user = function(){
 						console.log(row[0].id)
 						Admin.confirm("删除后数据不可恢复，您确认要删除吗？", function(b){
 							if(b){
-								Admin.ajaxJson(Admin.SERVER_URL + "/user/delete.do", {id:row[0].id}, function(data){
+								Admin.ajaxJson(deleteUrl, {id:row[0].id}, function(data){
 						      	  	if(data.success) {
 						      	  	  	Admin.alert("提示", data.msg, 1, function(){
 						      	  	  	  	$table.bootstrapTable("refresh");
@@ -183,14 +186,6 @@ Admin.user = function(){
 							}
 						});
 					});
-				}
-			},
-			{
-				name: "角色分配",
-				icon: "user",
-				btnType: "btnRoleRel",
-				handler: function(){
-					alert("delete");
 				}
 			}
 		],
@@ -207,5 +202,5 @@ Admin.user = function(){
 }();
 
 $(function(){
-	Admin.user.init();
+	Admin.menu.init();
 })

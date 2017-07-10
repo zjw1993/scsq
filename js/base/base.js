@@ -1,7 +1,7 @@
 var Admin = {
 	
 	STATIC_URL: "http://127.0.0.1:8020/scsq",
-	SERVER_URL: "http://localhost:8080/admin",
+	SERVER_URL: "http://localhost:9875/admin",
 	
 	
 	ajaxJson: function(url, param, callback) {
@@ -10,6 +10,7 @@ var Admin = {
 			type: 'get',
 		 	dataType: 'json',
 		 	data: param,
+		 	xhrFields:{ withCredentials:true },
 		 	success: function(data){
 		 		Admin.closeProgress();
 		 		//坚持登录
@@ -89,6 +90,21 @@ var Admin = {
  		}
 	},
 	
+	confirm: function(msg, callback){
+		layer.confirm(msg, {icon: 7, title:'提示', btn:['确定', '取消']}, 
+			function(){
+			  	if($.isFunction(callback)){
+			  		callback(true);
+			  	}
+			},
+			function(){
+			  	if($.isFunction(callback)){
+			  		callback(false);
+			  	}
+			}
+		);
+	},
+	
 	progress: function(msg){
 		 layer.msg((msg||'玩儿命加载中...'), {
 		  	icon: 16,
@@ -134,6 +150,24 @@ var Admin = {
 		if($.isFunction(callback)){
 			callback(row);
 		}
+	},
+	
+	/**
+	 * 根据表单组件name 从data中取对应值填充val
+	 * @param {Object} $form
+	 * @param {Object} data
+	 */
+	fillForm: function($form, data){
+		var inputs = $form.find(".form-control");
+		$.each(inputs, function(index, item){
+			if(item.tagName == 'INPUT') {
+				$(item).val((data[item.name])||'');
+			}
+			if(item.tagName == 'SELECT') {
+				$(item).val(data[item.name]);
+			}
+			// TODO
+		})
 	}
 	
 }
