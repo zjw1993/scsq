@@ -54,6 +54,7 @@ layui.define(['element', 'common'], function(exports) {
 						url: _config.url,
 						async: false, //_config.async,
 						dataType: 'json',
+						xhrFields:{ withCredentials:true },
 						success: function(result, status, xhr) {
 							//添加缓存
 							layui.data(cacheName, {
@@ -85,6 +86,7 @@ layui.define(['element', 'common'], function(exports) {
 					url: _config.url,
 					async: false, //_config.async,
 					dataType: 'json',
+					xhrFields:{ withCredentials:true },
 					success: function(result, status, xhr) {
 						var html = getHtml(result);
 						$container.html(html);
@@ -210,7 +212,7 @@ layui.define(['element', 'common'], function(exports) {
 				ulHtml += '<dl class="layui-nav-child">'
 				for(var j = 0; j < data[i].children.length; j++) {
 					ulHtml += '<dd title="'+data[i].children[j].title+'">';
-					ulHtml += '<a href="javascript:;" data-url="' + data[i].children[j].href + '">';
+					ulHtml += '<a href="javascript:;" data-url="' + Admin.STATIC_URL+data[i].children[j].href + '">';
 					if(data[i].children[j].icon !== undefined && data[i].children[j].icon !== '') {
 						if(data[i].children[j].icon.indexOf('fa-') !== -1) {
 							ulHtml += '<i class="fa ' + data[i].children[j].icon + '" data-icon="' + data[i].children[j].icon + '" aria-hidden="true"></i>';

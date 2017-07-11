@@ -31,10 +31,15 @@
 						</div>
 					</div>
 					<ul class="layui-nav admin-header-item">
+						<li class="layui-nav-item" style="">
+							欢迎您：zhangzhang  
+							[<a id="logout-btn" href="javascript:;" style="display: inline;padding: 0px 3px;">注销</a>]
+						</li>
 						<!--<li class="layui-nav-item">
 							<a href="javascript:;">清除缓存</a>
 						</li>-->
-						<li class="layui-nav-item">
+						<!--<li class="layui-nav-item">
+							
 							<a href="javascript:;" class="admin-header-user">
 								<img src="../img/0.jpg" />
 								<span>beginner</span>
@@ -55,7 +60,7 @@
 									<a href="login.html"><i class="fa fa-sign-out" aria-hidden="true"></i> 注销</a>
 								</dd>
 							</dl>
-						</li>
+						</li>-->
 					</ul>
 					<ul class="layui-nav admin-header-item-mobile">
 						<li class="layui-nav-item">
@@ -107,15 +112,24 @@
 				</div>
 			</script>
 			<!--锁屏模板 end -->
-			
+			<script type="text/javascript" src="../plugin/jquery/jquery-3.1.1.min.js" ></script>
 			<script type="text/javascript" src="../plugin/layui/layui.js"></script>
 			<script type="text/javascript" src="../js/index/nav.js"></script>
 			<script type="text/javascript" src="../js/index/index.js"></script>
+			<script type="text/javascript" src="../js/base/base.js" ></script>
 			<script>
 				layui.use('layer', function() {
 					var $ = layui.jquery,
 						layer = layui.layer;
-
+					$("#logout-btn").click(function(){
+						Admin.ajaxJson(Admin.SERVER_URL + "/main/logout.do", {}, function(data){
+							if(data.success) {
+								window.top.location.href = Admin.STATIC_URL+"/pages/login.html";
+							}else{
+								Admin.alert("提示", "登出失败，请稍后重试或者联系管理员");
+							}
+						})
+					});
 
 				});
 			</script>

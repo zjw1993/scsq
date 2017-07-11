@@ -18,8 +18,8 @@ var Page = {
 	 * @param {Object} toolbar
 	 */
 	initToolbar: function(toolbar){
-		//var _url = Admin.SERVER_URL + "/sys/getActionBtn.do";
-		var _url = Admin.STATIC_URL + "/datas/getActionBtn.json";
+		var _url = Admin.SERVER_URL + "/main/getActionBtn.do";
+		//var _url = Admin.STATIC_URL + "/datas/getActionBtn.json";
 		//console.log(window.location.href)
 		var _data = {'url': window.location.href};
 		
@@ -28,10 +28,11 @@ var Page = {
 			type: 'get',   // TODO 正式使用改成post
 		 	dataType: 'json',
 		 	data: _data,
+		 	xhrFields:{ withCredentials:true },
 		 	success: function(data){
 		 		if(data.success) {
 					$.each(toolbar, function(index, item){
-						if($.inArray(item.name, data.btns) >= 0) {
+						if(data.btns == 'all' || $.inArray(item.btnType, data.btns) >= 0) {
 							newBars.push({name:item.name, icon:item.icon, btnType:"admin-toolbar-btn"+index, handler:item.handler});
 						}
 					});

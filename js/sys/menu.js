@@ -1,12 +1,13 @@
 Admin.menu = function(){
 
 	var dataListUrl = Admin.SERVER_URL + "/menu/dataList.do";
+	var subListUrl = Admin.SERVER_URL + "/menu/subList.do";
 	var saveUrl = Admin.SERVER_URL + "/menu/save.do";
 	var editUrl = Admin.SERVER_URL + "/menu/edit.do";
 	var deleteUrl = Admin.SERVER_URL + "/menu/delete.do";
 	
 	var $table = $('#table');
-
+	
 	var _this = {
 		initSearch: function(){
 			$(".admin-content-search .btn-search").bind('click', function(){
@@ -16,6 +17,7 @@ Admin.menu = function(){
 		
 		getData : function(params){
 			var parameters = params.data;
+			parameters.parentId = 0;
 			parameters.name = $(".admin-content-search input[name='name']").val();
 			parameters.type = $(".admin-content-search select[name='type']").val();
 			
@@ -39,13 +41,13 @@ Admin.menu = function(){
 				paginationPreText:"上一页",	// 上一页按钮显示文字 
 				paginationNextText: "下一页", // 下一页按钮显示文字
 				clickToSelect: true,		// 单击选中该行
-				singleSelect: false,		// 单选
-				checkboxHeader: true,		// 列头全选按钮
+				singleSelect: true,		// 单选
+				checkboxHeader: false,		// 列头全选按钮
 				silentSort: true,			// 点击分页按钮时，记住排序
 				detailView: true,
-				/*detailFormatter: function(index, row){
-					return row.userName + "</br>" + row.mobile;
-				},*/
+				onExpandRow: function (index, row, $detail) {
+                    _this.InitSubTable(index, row, $detail);
+                },
 			    columns: [{
 			        field: '',
 			        title: '',
@@ -71,25 +73,36 @@ Admin.menu = function(){
 			        width: '100px',
 			        align: 'center'
 			    }, {
-			        field: 'actions',
-			        title: 'actions',
+			        field: 'icon',
+			        title: '图标',
 			        align: 'center'
+			    }, {
+			        field: 'spread',
+			        title: '默认展开',
+			        align: 'center',
+			        formatter: function(val){
+			        	if(val == 0){
+			        		return "否";
+			        	}else{
+			        		return "是";
+			        	}
+			        }
 			    }, {
 			        field: 'type',
 			        title: 'type',
-			        align: 'center'
+			        align: 'center',
+			        formatter: function(val){
+			        	if(val == 1){
+			        		return "菜单";
+			        	}else{
+			        		return "链接";
+			        	}
+			        }
 			    }, {
 			        field: 'rank',
 			        title: 'rank',
 			        width: '',
-			        align: 'center',
-			        formatter: function(val){
-			        	if(val == 0){
-			        		return "正常";
-			        	}else{
-			        		return "禁用";
-			        	}
-			        }
+			        align: 'center'
 			    }, {
 			        field: 'createTime',
 			        title: 'createTime',
@@ -100,6 +113,89 @@ Admin.menu = function(){
 			});
 		},
 		
+		subTableParentId:"",
+		getSubData : function(params){
+			var parameters = params.data;
+			parameters.parentId = 1;
+			
+			Admin.ajaxJson(subListUrl, parameters, function(data){
+				params.success(data.rows)
+			});
+		},
+		
+		InitSubTable : function (index, row, $detail) {
+//	        var _this.subTableParentId = row.id;
+	        var cur_table = $detail.html('<table></table>').find('table');
+	        $(cur_table).bootstrapTable({
+	            ajax: _this.getSubData,    	// 自定义ajax获取数据
+				undefinedText: "-",   		// undefined字段默认显示
+				clickToSelect: true,		// 单击选中该行
+				singleSelect: true,		// 单选
+				checkboxHeader: false,		// 列头全选按钮
+			    columns: [{
+			        field: '',
+			        title: '',
+			        checkbox: true
+			    }, {
+			        field: 'id',
+			        title: 'ID',
+			        width: '122px',
+			        align: 'center'
+			    }, {
+			        field: 'name',
+			        title: 'name',
+			        width: '100px',
+			        align: 'center'
+			    }, {
+			        field: 'url',
+			        title: 'url',
+			        width: '200px',
+			        align: 'center'
+			    }, {
+			        field: 'parentId',
+			        title: 'parentId',
+			        width: '100px',
+			        align: 'center'
+			    }, {
+			        field: 'icon',
+			        title: '图标',
+			        align: 'center'
+			    }, {
+			        field: 'spread',
+			        title: '默认展开',
+			        align: 'center',
+			        formatter: function(val){
+			        	if(val == 0){
+			        		return "否";
+			        	}else{
+			        		return "是";
+			        	}
+			        }
+			    }, {
+			        field: 'type',
+			        title: 'type',
+			        align: 'center',
+			        formatter: function(val){
+			        	if(val == 1){
+			        		return "菜单";
+			        	}else{
+			        		return "链接";
+			        	}
+			        }
+			    }, {
+			        field: 'rank',
+			        title: 'rank',
+			        width: '',
+			        align: 'center'
+			    }, {
+			        field: 'createTime',
+			        title: 'createTime',
+			        width: '',
+			        align: 'center'
+			    }]
+	        });
+	    },
+		
 		toolbar : [
 			{
 				name: "添加",
@@ -108,7 +204,7 @@ Admin.menu = function(){
 				handler: function(){
 					  layer.open({
 						  type: 1,
-						  title: "添加用户",
+						  title: "添加菜单",
 						  area: ['500px', '340px'],
 						  shadeClose: false, //点击遮罩关闭
 						  content: $("#edit-panel-templet").text(),
@@ -139,7 +235,7 @@ Admin.menu = function(){
 					Admin.checkSingleRow($table, function(row){
 						layer.open({
 						  	type: 1,
-						  	title: "编辑用户",
+						  	title: "编辑菜单",
 						  	area: ['500px', '340px'],
 						  	shadeClose: false, //点击遮罩关闭
 						  	content: $("#edit-panel-templet").text(),

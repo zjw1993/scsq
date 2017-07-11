@@ -33,10 +33,11 @@ layui.config({
 		spreadOne: true,
 		elem: '#admin-navbar-side',
 		cached: true,
-		data: navs
-		/*cached:true,
-		url: 'datas/nav.json'*/
+		//data: data.navs
+		cached:false,
+		url: 'http://localhost:9875/admin/main/getMenuList.do'
 	});
+	
 	//渲染navbar
 	navbar.render();
 	//监听点击事件

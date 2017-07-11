@@ -6,9 +6,10 @@
 		
 		<link rel="stylesheet" href="../../plugin/bootstrap-3.3.7/css/bootstrap.min.css" />
 		<link rel="stylesheet" href="../../plugin/bootstrap-table/bootstrap-table.min.css" />
+		<link rel="stylesheet" href="../../plugin/bootstrap-treeview/bootstrap-treeview.min.css" />
 		<link rel="stylesheet" href="../../css/global.css" />
 
-		<title>菜单管理</title>
+		<title>角色管理</title>
 		
 	</head>
 
@@ -17,59 +18,52 @@
 			<div class="admin-content-search">
 				<form class="form-inline">
 					<div class="form-group">
-						<input type="text" class="form-control" placeholder="菜单名称" name="name">
+						<input type="text" class="form-control" placeholder="角色名称" name="name">
 					</div>
-					<select class="form-control" name="type">
-						<option value="">所有菜单类型</option>
-					  	<option value="1">菜单</option>
-					  	<option value="2">链接</option>
-					</select>
 					<buttontype="submit" class="btn btn-search">查询</button>
 				</form>
 			</div>
 			<div class="admin-content-toolbar">
-				
 			</div>
 		</div>
 		
 		<div class="admin-content-body">
 			<table id="table">
         	</table>
+        	
 		</div>
 		
 		<script type="text/template" id="edit-panel-templet">
 			<form>
 				<input type="hidden" class="form-control" name="id" />
-				<input type="hidden" class="form-control" name="parentId" />
 				<div class="col-sm-6 form-group">
-					<label>菜单名称</label>
-					<input type="text" class="form-control" name="name" placeholder="菜单名称">
+					<label>角色名称</label>
+					<input type="text" class="form-control" name="name" placeholder="角色名">
 				</div>
 				<div class="col-sm-6 form-group">
-					<label>菜单url</label>
-					<input type="password" class="form-control" name="url" placeholder="菜单url">
-				</div>
-				<div class="col-sm-6 form-group">
-					<label>图标</label>
-					<input type="text" class="form-control" name="icon" placeholder="图标">
-				</div>
-				<div class="col-sm-6 form-group">
-					<label>默认展开</label>
-					<select class="form-control" name="spread">
-					  	<option value="0">否</option>
-					  	<option value="1">是</option>
+					<label>状态</label>
+					<select class="form-control" name="status">
+					  	<option value="0">正常</option>
+					  	<option value="1">禁用</option>
 					</select>
 				</div>
-				<div class="col-sm-6 form-group">
-					<label>菜单类型</label>
-					<select class="form-control" name="spread">
-					  	<option value="1">菜单</option>
-					  	<option value="2">链接</option>
-					</select>
+				<div class="col-sm-12 form-group">
+					<label>角色描述</label>
+					<input type="text" class="form-control" name="description" placeholder="角色描述">
 				</div>
-				<div class="col-sm-6 form-group">
-					<label>rank</label>
-					<input type="text" class="form-control" name="rank" placeholder="rank">
+			</form>
+		</script>
+		
+		<script type="text/template" id="auth-panel-templet">
+			<form>
+				<input type="hidden" class="form-control" name="roleId" />
+				<div class="col-sm-12 form-group">
+					<label>角色名称</label>
+					<input type="text" class="form-control" disabled="disabled" name="roleName" placeholder="角色名">
+				</div>
+				<div class="col-sm-12 form-group">
+					<label>权限</label>
+					<div id="tree"></div>
 				</div>
 				
 			</form>
@@ -81,9 +75,10 @@
 	<script type="text/javascript" src="../../plugin/bootstrap-3.3.7/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="../../plugin/bootstrap-table/bootstrap-table.min.js" ></script>
 	<script type="text/javascript" src="../../plugin/bootstrap-table/bootstrap-table-zh-CN.js" ></script>
+	<script type="text/javascript" src="../../plugin/bootstrap-treeview/bootstrap-treeview.min.js" ></script>
 	<script type="text/javascript" src="../../plugin/layer/layer.js" ></script>
 	<script type="text/javascript" src="../../js/base/base.js" ></script>
 	<script type="text/javascript" src="../../js/base/page.js" ></script>
-	<script type="text/javascript" src="../../js/sys/menu.js" ></script>
+	<script type="text/javascript" src="../../js/sys/role.js" ></script>
 
 </html>

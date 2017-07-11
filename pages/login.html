@@ -22,13 +22,13 @@
 						<label class="beg-login-icon">
                         	<i class="layui-icon">&#xe612;</i>
                     	</label>
-						<input type="text" name="userName" lay-verify="userName" autocomplete="off" placeholder="这里输入登录名" class="layui-input">
+						<input type="text" value="zhangzhang" name="userName" lay-verify="userName" autocomplete="off" placeholder="这里输入登录名" class="layui-input">
 					</div>
 					<div class="layui-form-item">
 						<label class="beg-login-icon">
                         	<i class="layui-icon">&#xe642;</i>
                     	</label>
-						<input type="password" name="password" lay-verify="password" autocomplete="off" placeholder="这里输入密码" class="layui-input">
+						<input type="password" value="123456" name="password" lay-verify="password" autocomplete="off" placeholder="这里输入密码" class="layui-input">
 					</div>
 					
 				</form>
@@ -58,7 +58,7 @@
 					form = layui.form();
 				
 				$("#submit-btn").click(function(){
-					Admin.ajaxJson(Admin.SERVER_URL+"/sys/login.do", $("#login-form").serialize(), function(ret){
+					Admin.ajaxJson(Admin.SERVER_URL+"/main/login.do", $("#login-form").serialize(), function(ret){
 						if(ret.success) {
 							location.href = 'index.html';
 						}else {

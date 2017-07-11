@@ -1,9 +1,9 @@
-Admin.user = function(){
+Admin.role = function(){
 
-	var dataListUrl = Admin.SERVER_URL + "/user/dataList.do";
-	var saveUrl = Admin.SERVER_URL + "/user/save.do";
-	var editUrl = Admin.SERVER_URL + "/user/edit.do";
-	var deleteUrl = Admin.SERVER_URL + "/user/delete.do";
+	var dataListUrl = Admin.SERVER_URL + "/role/dataList.do";
+	var saveUrl = Admin.SERVER_URL + "/role/save.do";
+	var editUrl = Admin.SERVER_URL + "/role/edit.do";
+	var deleteUrl = Admin.SERVER_URL + "/role/delete.do";
 
 	var $table = $('#table');
 
@@ -16,9 +16,7 @@ Admin.user = function(){
 		
 		getData : function(params){
 			var parameters = params.data;
-			parameters.userName = $(".admin-content-search input[name='userName']").val();
-			parameters.mobile = $(".admin-content-search input[name='mobile']").val();
-			parameters.email = $(".admin-content-search input[name='email']").val();
+			parameters.name = $(".admin-content-search input[name='name']").val();
 			
 			Admin.ajaxJson(dataListUrl, parameters, function(data){
 				params.success(data)
@@ -29,7 +27,7 @@ Admin.user = function(){
 			$table.bootstrapTable({
 				ajax: _this.getData,    	// 自定义ajax获取数据
 				undefinedText: "未知",   		// undefined字段默认显示
-				//striped: false,				// 隔行变色效果
+				striped: false,				// 隔行变色效果
 				pagination: true,			// 显示分页
 				paginationVAlign: "bottom", // 分页条显示位置
 				sidePagination: "server",	// 分页数据来源  server服务器
@@ -42,12 +40,6 @@ Admin.user = function(){
 				clickToSelect: true,		// 单击选中该行
 				singleSelect: false,		// 单选
 				checkboxHeader: true,		// 列头全选按钮
-				//maintainSelected: true,	// 在点击分页按钮或搜索按钮时，将记住checkbox的选择项
-				//silentSort: true,			// 点击分页按钮时，记住排序
-				//detailView: true,
-				//detailFormatter: function(index, row){
-				//	return row.userName + "</br>" + row.mobile;
-				//},
 			    columns: [{
 			        field: '',
 			        title: '',
@@ -58,43 +50,18 @@ Admin.user = function(){
 			        width: '100px',
 			        align: 'center'
 			    }, {
-			        field: 'userName',
-			        title: 'userName',
-			        width: '100px',
-			        align: 'center'
-			    }, {
-			        field: 'password',
-			        title: 'password',
+			        field: 'name',
+			        title: '角色名称',
 			        width: '200px',
 			        align: 'center'
 			    }, {
-			        field: 'email',
-			        title: 'email',
-			        width: '100px',
-			        align: 'center'
-			    }, {
-			        field: 'mobile',
-			        title: 'mobile',
-			        align: 'center'
-			    }, {
-			        field: 'realName',
-			        title: 'realName',
-			        align: 'center'
-			    }, {
-			        field: 'status',
-			        title: 'status',
+			        field: 'description',
+			        title: '角色描述',
 			        width: '',
-			        align: 'center',
-			        formatter: function(val){
-			        	if(val == 0){
-			        		return "正常";
-			        	}else{
-			        		return "禁用";
-			        	}
-			        }
+			        align: 'center'
 			    }, {
 			        field: 'createTime',
-			        title: 'createTime',
+			        title: '创建时间',
 			        width: '',
 			        align: 'center'
 			    }]
@@ -110,7 +77,7 @@ Admin.user = function(){
 				handler: function(){
 					  layer.open({
 						  type: 1,
-						  title: "添加用户",
+						  title: "添加角色",
 						  area: ['500px', '340px'],
 						  shadeClose: false, //点击遮罩关闭
 						  content: $("#edit-panel-templet").text(),
@@ -126,7 +93,7 @@ Admin.user = function(){
 						      	  	  	  $table.bootstrapTable("refresh");
 						      	  	  });
 						      	  }else{
-						      	  	Admin.alert("提示", data.msg, 1)
+						      	  	Admin.alert("提示", data.msg, 1,)
 						      	  }
 						      });
 						  }
@@ -141,7 +108,7 @@ Admin.user = function(){
 					Admin.checkSingleRow($table, function(row){
 						layer.open({
 						  	type: 1,
-						  	title: "编辑用户",
+						  	title: "编辑角色",
 						  	area: ['500px', '340px'],
 						  	shadeClose: false, //点击遮罩关闭
 						  	content: $("#edit-panel-templet").text(),
@@ -191,14 +158,136 @@ Admin.user = function(){
 				}
 			},
 			{
-				name: "角色分配",
-				icon: "user",
-				btnType: "btnRoleRel",
+				name: "权限分配",
+				icon: "edit",
+				btnType: "auth",
 				handler: function(){
-					alert("delete");
+					Admin.checkSingleRow($table, function(row){
+						layer.open({
+						  	type: 1,
+						  	title: "角色权限分配",
+						  	area: ['500px', '500px'],
+						  	shadeClose: false, //点击遮罩关闭
+						  	content: $("#auth-panel-templet").text(),
+						  	success:function(layero, index){
+						  		console.log(row[0].name)
+						  		$(layero).find("input[name='roleName']").val(row[0].name);
+						  		$('#tree').treeview({
+						  			data: _this.getTree(),
+						  			backColor: "#ececec",
+						  			showCheckbox: true,
+						  			showBorder: false,
+						  			highlightSelected: false,
+						  			// TODO
+						  		});
+						  	},
+						  	btn: ['提交'],
+						  	btnAlign: 'r',
+						  	yes:function(index, layero){
+						  	  	var $form = $(layero).find("form");
+						      	var param = $form.serialize();
+						      	Admin.ajaxJson(editUrl, param, function(data){
+						      	  	if(data.success) {
+						      	  	  	Admin.alert("提示", data.msg, 1, function(){
+						      	  	  	  	layer.close(index);
+						      	  	  	  	$table.bootstrapTable("refresh");
+						      	  	  	});
+						      	  	}
+						      	});
+						  	}
+						  	
+					  	});
+					});
 				}
 			}
 		],
+		getTree: function(){
+			var tree = [
+				  {
+				    text: "系统管理",
+				    nodes: [
+				      {
+				        text: "用户管理",
+					    nodes: [
+					      {
+					        text: "添加",
+					      },
+					      {
+					        text: "删除"
+					      },
+					      {
+					        text: "修改"
+					      }
+					    ]
+				      },
+				      {
+				        text: "菜单管理",
+				        nodes: [
+					      {
+					        text: "添加",
+					      },
+					      {
+					        text: "删除"
+					      },
+					      {
+					        text: "修改"
+					      }
+					    ]
+				      },
+				      {
+				        text: "角色管理",
+				        nodes: [
+					      {
+					        text: "添加",
+					      },
+					      {
+					        text: "删除"
+					      },
+					      {
+					        text: "修改"
+					      }
+					    ]
+				      }
+				    ]
+				  },
+				  {
+				    text: "报表管理",
+				    nodes: [
+				      {
+				        text: "月报表",
+				        nodes: [
+					      {
+					        text: "导出",
+					      },
+					      {
+					        text: "下载"
+					      },
+					      {
+					        text: "修改"
+					      }
+					    ]
+				      },
+				      {
+				        text: "周报表"
+				      },
+				      {
+				        text: "日报表"
+				      }
+				    ]
+				  },
+				  {
+				    text: "Parent 3"
+				  },
+				  {
+				    text: "Parent 4"
+				  },
+				  {
+				    text: "Parent 5"
+				  }
+				];
+			
+			return tree;
+		},
 		
 		init : function(){
 			_this.initSearch();
@@ -212,5 +301,5 @@ Admin.user = function(){
 }();
 
 $(function(){
-	Admin.user.init();
+	Admin.role.init();
 })
