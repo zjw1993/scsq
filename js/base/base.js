@@ -168,6 +168,23 @@ var Admin = {
 			}
 			// TODO
 		})
-	}
+	},
+	
+	checkAllTreeViewChilds: function($treeView, node){
+		if(node.nodes != null) {
+			$.each(node.nodes, function(i, item){
+				$treeView.treeview('checkNode', [item.nodeId, {silent: true}]);
+				Admin.checkAllTreeViewChilds($treeView, item);
+			})
+		}
+	},
+	unCheckAllTreeViewChilds: function($treeView, node){
+		if(node.nodes != null) {
+			$.each(node.nodes, function(i, item){
+				$treeView.treeview('uncheckNode', [item.nodeId, {silent: true}]);
+				Admin.unCheckAllTreeViewChilds($treeView, item);
+			})
+		}
+	},
 	
 }

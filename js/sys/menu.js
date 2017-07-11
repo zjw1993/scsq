@@ -220,7 +220,7 @@ Admin.menu = function(){
 						      	  	  	  $table.bootstrapTable("refresh");
 						      	  	  });
 						      	  }else{
-						      	  	Admin.alert("提示", data.msg, 1,)
+						      	  	Admin.alert("提示", data.msg, 1)
 						      	  }
 						      });
 						  }

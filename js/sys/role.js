@@ -4,6 +4,7 @@ Admin.role = function(){
 	var saveUrl = Admin.SERVER_URL + "/role/save.do";
 	var editUrl = Admin.SERVER_URL + "/role/edit.do";
 	var deleteUrl = Admin.SERVER_URL + "/role/delete.do";
+	var authTreeUrl = Admin.SERVER_URL + "/main/authTree.do";
 
 	var $table = $('#table');
 
@@ -93,7 +94,7 @@ Admin.role = function(){
 						      	  	  	  $table.bootstrapTable("refresh");
 						      	  	  });
 						      	  }else{
-						      	  	Admin.alert("提示", data.msg, 1,)
+						      	  	Admin.alert("提示", data.msg, 1)
 						      	  }
 						      });
 						  }
@@ -170,30 +171,84 @@ Admin.role = function(){
 						  	shadeClose: false, //点击遮罩关闭
 						  	content: $("#auth-panel-templet").text(),
 						  	success:function(layero, index){
-						  		console.log(row[0].name)
+						  		$(layero).find("input[name='roleId']").val(row[0].id);
 						  		$(layero).find("input[name='roleName']").val(row[0].name);
-						  		$('#tree').treeview({
-						  			data: _this.getTree(),
-						  			backColor: "#ececec",
-						  			showCheckbox: true,
-						  			showBorder: false,
-						  			highlightSelected: false,
-						  			// TODO
+						  		Admin.progress("加载中请稍后...");
+						  		Admin.ajaxJson(authTreeUrl, {}, function(data){
+						  			if(data.success) {
+						  				$('#tree').treeview({
+								  			data: data.data,
+								  			backColor: "#ececec",
+								  			showCheckbox: true,
+								  			showBorder: false,
+								  			highlightSelected: false,
+								  			onNodeChecked: function(event,data){
+								  				Admin.checkAllTreeViewChilds($('#tree'), data);
+								  			},
+								  			onNodeUnchecked: function(event, data){
+								  				Admin.unCheckAllTreeViewChilds($('#tree'), data);
+								  				$('#tree').treeview('uncheckNode', [0, {silent: true}]);
+								  			}
+								  		});
+						  			}
 						  		});
+						  		
 						  	},
 						  	btn: ['提交'],
 						  	btnAlign: 'r',
 						  	yes:function(index, layero){
 						  	  	var $form = $(layero).find("form");
 						      	var param = $form.serialize();
-						      	Admin.ajaxJson(editUrl, param, function(data){
+						      	//console.log(param)
+						      	
+						      	var rootNode = $('#tree').treeview('getNode', 0);
+						      	//console.log(rootNode)
+						      	var checked = new Array();
+						      	if(rootNode.nodes != null) {
+						      		$.each(rootNode.nodes, function(i, item){
+						      			if(item.state.checked){
+						      				var obj = {};
+						      				obj.text = item.text;
+						      				obj.objId = item.objId;
+						      				obj.relType = item.relType;
+						      				checked.push(obj);
+						      			}
+					      				if(item.nodes != null) {
+								      		$.each(item.nodes, function(i1, item1){
+								      			if(item1.state.checked){
+								      				var obj = {};
+								      				obj.text = item1.text;
+								      				obj.objId = item1.objId;
+								      				obj.relType = item1.relType;
+								      				checked.push(obj);
+								      			}
+							      				if(item1.nodes != null) {
+										      		$.each(item1.nodes, function(i2, item2){
+										      			if(item2.state.checked){
+										      				var obj = {};
+										      				obj.text = item2.text;
+										      				obj.objId = item2.objId;
+										      				obj.relType = item2.relType;
+										      				checked.push(obj);
+										      			}
+										      		})
+										      	}
+								      		})
+								      	}
+						      		})
+						      	}
+						      	
+						      	console.log(checked)
+						      	// TODO
+						      	
+						      	/*Admin.ajaxJson(editUrl, param, function(data){
 						      	  	if(data.success) {
 						      	  	  	Admin.alert("提示", data.msg, 1, function(){
 						      	  	  	  	layer.close(index);
 						      	  	  	  	$table.bootstrapTable("refresh");
 						      	  	  	});
 						      	  	}
-						      	});
+						      	});*/
 						  	}
 						  	
 					  	});
@@ -205,6 +260,7 @@ Admin.role = function(){
 			var tree = [
 				  {
 				    text: "系统管理",
+				    id: 111,
 				    nodes: [
 				      {
 				        text: "用户管理",
