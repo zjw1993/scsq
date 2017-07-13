@@ -1,4 +1,4 @@
-Admin.user = function(){
+Admin.test = function(){
 
 	var dataListUrl = Admin.SERVER_URL + "/user/dataList.do";
 	var saveUrl = Admin.SERVER_URL + "/user/save.do";
@@ -104,31 +104,6 @@ Admin.user = function(){
 			});
 		},
 		
-		editFormValidConf: {
-			rules:{
-	  			userName:{
-	  				required: true,
-	  				rangelength: [2,20]
-	  			},
-	  			password:{
-	  				required: true,
-	  				rangelength:[6,20]
-	  			},
-	  			realName:{
-	  				maxlength:20
-	  			},
-	  			mobile:{
-	  				mobilePhone: true
-	  			},
-	  			email:{
-	  				email:true
-	  			}
-	  		},
-	  		messages:{
-	  			// 不填写表示使用系统默认提示文本
-	  		}
-		},
-		
 		toolbar : [
 			{
 				name: "添加",
@@ -138,27 +113,36 @@ Admin.user = function(){
 					layer.open({
 						type: 1,
 						title: "添加用户",
-						area: ['500px', '360px'],
+					  	area: ['500px', '340px'],
 						shadeClose: false, //点击遮罩关闭
 						content: $("#edit-panel-templet").text(),
 						btnAlign: 'r',
 						btn: ['保存'],
 						yes:function(index, layero){
-						  	if(!Admin.validForm('#edit-form', _this.editFormValidConf)){
-						  		return;
-						  	}
-						  	var $form = $(layero).find("form");
-						    var param = $form.serialize();
-						    Admin.ajaxJson(saveUrl, param, function(data){
-						      	if(data.success) {
-						      	  	Admin.alert("提示", data.msg, 1, function(){
-						      	  	  	layer.close(index);
-						      	  	  	$table.bootstrapTable("refresh");
-						      	  	});
-						      	}else{
+						  	$form = $("#edit-form")
+						  	var a = Admin.validForm($form, {
+						  		rules:{
+						  			userName:"required",
+						  			password:"required"
+						  		},
+						  		messages:{
+						  			userName:"请输入用户名",
+						  			password:"asdasdas"
+						  		}
+						  	})
+						  	
+						  	  /*var $form = $(layero).find("form");
+						      var param = $form.serialize();
+						      Admin.ajaxJson(saveUrl, param, function(data){
+						      	  if(data.success) {
+						      	  	  Admin.alert("提示", data.msg, 1, function(){
+						      	  	  	  layer.close(index);
+						      	  	  	  $table.bootstrapTable("refresh");
+						      	  	  });
+						      	  }else{
 						      	  	Admin.alert("提示", data.msg, 1)
-						      	}
-						    });
+						      	  }
+						      });*/
 						}
 					});
 				}
@@ -172,7 +156,7 @@ Admin.user = function(){
 						layer.open({
 						  	type: 1,
 						  	title: "编辑用户",
-						  	area: ['500px', '360px'],
+						  	area: ['500px', '340px'],
 						  	shadeClose: false, //点击遮罩关闭
 						  	content: $("#edit-panel-templet").text(),
 						  	success:function(layero, index){
@@ -313,5 +297,5 @@ Admin.user = function(){
 }();
 
 $(function(){
-	Admin.user.init();
+	Admin.test.init();
 })

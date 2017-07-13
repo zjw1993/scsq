@@ -205,6 +205,28 @@ var Admin = {
 			// TODO
 		});
 	},
+	resetForm($form){
+		$form[0].reset();
+	},
+	
+	validForm(form, config){
+		$(form).validate({
+	  		rules: config.rules,
+	  		messages: config.messages,
+	  		focusInvalid: true,
+	  		errorPlacement: function (error, element) {
+                if ($(element).next("div").hasClass("tooltip")) {
+                    $(element).attr("data-original-title", $(error).text()).tooltip("show");
+                } else {
+                    $(element).attr("title", $(error).text()).tooltip("show");
+                }
+            },
+            unhighlight: function (element, errorClass, validClass) { //验证通过
+                $(element).tooltip('destroy').removeClass(errorClass);
+            },
+	  	});
+	  	return $(form).valid();
+	},
 	
 	checkAllTreeViewChilds: function($treeView, node){
 		if(node.nodes != null) {
