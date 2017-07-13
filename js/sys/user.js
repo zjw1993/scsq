@@ -119,7 +119,14 @@ Admin.user = function(){
 						  btnAlign: 'r',
 						  btn: ['保存'],
 						  yes:function(index, layero){
-						  	  var $form = $(layero).find("form");
+						  	var bootstrapValidator = $('#edit-panel-templet').data('bootstrapValidator');
+						  	
+						  	bootstrapValidator.validate();
+						   if(bootstrapValidator.isValid())
+						     	
+						   else return;
+						  	
+						  	  /*var $form = $(layero).find("form");
 						      var param = $form.serialize();
 						      Admin.ajaxJson(saveUrl, param, function(data){
 						      	  if(data.success) {
@@ -130,7 +137,7 @@ Admin.user = function(){
 						      	  }else{
 						      	  	Admin.alert("提示", data.msg, 1)
 						      	  }
-						      });
+						      });*/
 						  }
 					  });
 				}
@@ -276,6 +283,25 @@ Admin.user = function(){
 			_this.initSearch();
 			_this.initTable();
 			Page.initToolbar(_this.toolbar);
+			
+			$('#edit-panel-templet').bootstrapValidator({
+				live: 'disabled',
+				message: 'This value is not valid',
+				feedbackIcons: {
+				    valid: 'glyphicon glyphicon-ok',
+				    invalid: 'glyphicon glyphicon-remove',
+				    validating: 'glyphicon glyphicon-refresh'
+				},
+				fields: {
+					userName:{
+						validators:{
+							notEmpty:{
+								message: 'The first name is required and cannot be empty'
+							}
+						}
+					}
+				}
+			});
 		}
 	};
 	
