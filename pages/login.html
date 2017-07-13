@@ -22,7 +22,7 @@
 						<label class="beg-login-icon">
                         	<i class="layui-icon">&#xe612;</i>
                     	</label>
-						<input type="text" value="zhangzhang" name="userName" lay-verify="userName" autocomplete="off" placeholder="这里输入登录名" class="layui-input">
+						<input type="text" value="SuperAdmin" name="userName" lay-verify="userName" autocomplete="off" placeholder="这里输入登录名" class="layui-input">
 					</div>
 					<div class="layui-form-item">
 						<label class="beg-login-icon">
@@ -33,20 +33,20 @@
 					
 				</form>
 				<div class="layui-form-item">
-						<div class="beg-pull-left beg-login-remember">
-							<label>记住帐号？</label>
-							<input type="checkbox" name="rememberMe" value="true" lay-skin="switch" checked title="记住帐号">
-						</div>
-						<div class="beg-pull-right">
-							<button id="submit-btn" class="layui-btn layui-btn-primary">
-                            	<!--<i class="layui-icon">&#xe650;</i>--> 登录
-                        	</button>
-						</div>
-						<div class="beg-clear"></div>
-					</div>
+					<!--<div class="beg-pull-left beg-login-remember">
+						<label>记住帐号？</label>
+						<input type="checkbox" name="rememberMe" value="true" lay-skin="switch" checked title="记住帐号">
+					</div>-->
+					<!--<div class="beg-pull-right">-->
+						<button id="submit-btn" class="layui-btn layui-btn-primary" style="width: 100%;">
+                        	<!--<i class="layui-icon">&#xe650;</i>--> 登录
+                    	</button>
+					<!--</div>-->
+					<div class="beg-clear"></div>
+				</div>
 			</div>
 			<footer>
-				<p>Beginner © www.zhengjinfan.cn</p>
+				<p>admin © www.weiniu.cn</p>
 			</footer>
 		</div>
 		<script type="text/javascript" src="../plugin/jquery/jquery-3.1.1.min.js" ></script>
@@ -58,8 +58,10 @@
 					form = layui.form();
 				
 				$("#submit-btn").click(function(){
+					Admin.progress("登陆中.....");
 					Admin.ajaxJson(Admin.SERVER_URL+"/main/login.do", $("#login-form").serialize(), function(ret){
 						if(ret.success) {
+							window.localStorage.setItem("UN", ret.user.userName);
 							location.href = 'index.html';
 						}else {
 							Admin.alert("", ret.msg);

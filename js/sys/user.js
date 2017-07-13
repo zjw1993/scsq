@@ -4,6 +4,8 @@ Admin.user = function(){
 	var saveUrl = Admin.SERVER_URL + "/user/save.do";
 	var editUrl = Admin.SERVER_URL + "/user/edit.do";
 	var deleteUrl = Admin.SERVER_URL + "/user/delete.do";
+	var saveURelUrl = Admin.SERVER_URL + "/role/saveURel.do";
+	var roleCheckList = Admin.SERVER_URL + "/role/roleCheckList.do";
 
 	var $table = $('#table');
 
@@ -40,7 +42,7 @@ Admin.user = function(){
 				paginationPreText:"上一页",	// 上一页按钮显示文字 
 				paginationNextText: "下一页", // 下一页按钮显示文字
 				clickToSelect: true,		// 单击选中该行
-				singleSelect: false,		// 单选
+				singleSelect: true,		// 单选
 				checkboxHeader: true,		// 列头全选按钮
 				//maintainSelected: true,	// 在点击分页按钮或搜索按钮时，将记住checkbox的选择项
 				//silentSort: true,			// 点击分页按钮时，记住排序
@@ -59,30 +61,30 @@ Admin.user = function(){
 			        align: 'center'
 			    }, {
 			        field: 'userName',
-			        title: 'userName',
+			        title: '用户名',
 			        width: '100px',
 			        align: 'center'
 			    }, {
-			        field: 'password',
-			        title: 'password',
+			        field: 'roleNames',
+			        title: '角色',
 			        width: '200px',
 			        align: 'center'
 			    }, {
 			        field: 'email',
-			        title: 'email',
+			        title: 'Email',
 			        width: '100px',
 			        align: 'center'
 			    }, {
 			        field: 'mobile',
-			        title: 'mobile',
+			        title: '手机号码',
 			        align: 'center'
 			    }, {
 			        field: 'realName',
-			        title: 'realName',
+			        title: '真实姓名',
 			        align: 'center'
 			    }, {
 			        field: 'status',
-			        title: 'status',
+			        title: '状态',
 			        width: '',
 			        align: 'center',
 			        formatter: function(val){
@@ -94,7 +96,7 @@ Admin.user = function(){
 			        }
 			    }, {
 			        field: 'createTime',
-			        title: 'createTime',
+			        title: '创建时间',
 			        width: '',
 			        align: 'center'
 			    }]
@@ -195,7 +197,77 @@ Admin.user = function(){
 				icon: "user",
 				btnType: "btnRoleRel",
 				handler: function(){
-					alert("delete");
+					Admin.checkSingleRow($table, function(row){
+						layer.open({
+						  	type: 1,
+						  	title: "用户角色分配",
+						  	area: ['500px', '500px'],
+						  	shadeClose: false, //点击遮罩关闭
+						  	content: $("#role-panel-templet").text(),
+						  	success:function(layero, index){
+						  		var $form = $(layero).find("form");
+						  		$form.find("input[name='userId']").val(row[0].id);
+						  		$form.find("input[name='userName']").val(row[0].userName);
+						  		$('#roleId').multiselect({
+						  			buttonWidth: '100%',
+						  			numberDisplayed: 4,
+						  			buttonText: function(options, select) {
+								        if (options.length == 0) {
+								          return '请选择用户角色';
+								        } else {
+								          	if (options.length > this.numberDisplayed) {
+								            	return '已选择'+options.length+'个角色';
+								          	} else {
+								            	var selected = '';
+								            	options.each(function() {
+								             		var label = ($(this).attr('label') !== undefined) 
+								             					? $(this).attr('label') 
+								             					: $(this).html();
+								              		selected += label + ', ';
+								            	});
+								            	return selected.substr(0, selected.length - 2);
+								          	}
+							        	}
+							      	}
+						  		});
+						  		Admin.progress();
+						  		Admin.ajaxJson(roleCheckList, {userId:row[0].id}, function(data){
+						      	  	if(data.success) {
+						      	  		var selectData = [];
+						      	  	  	$.each(data.roles, function(i, item){
+						      	  	  		var dataItem = {};
+						      	  	  		dataItem.label = item.name;
+						      	  	  		dataItem.value = item.id;
+						      	  	  		selectData.push(dataItem);
+						      	  	  	})
+						      	  	  	$('#roleId').multiselect('dataprovider', selectData);
+						      	  	  	if(data.userRoles) {
+						      	  	  		$.each(data.userRoles, function(i, item){
+						      	  	  			$('#roleId').multiselect('select', item.roleId);
+						      	  	  		})
+						      	  	  	}
+						      	  	}
+						      	});
+						  		
+						  	},
+						  	btn: ['提交'],
+						  	btnAlign: 'r',
+						  	yes:function(index, layero){
+						  	  	var $form = $(layero).find("form");
+						      	var param = $form.serialize();
+						      	console.log(param)
+						      	Admin.ajaxJson(saveURelUrl, param, function(data){
+						      	  	if(data.success) {
+						      	  	  	Admin.alert("提示", data.msg, 1, function(){
+						      	  	  	  	layer.close(index);
+						      	  	  	  	$table.bootstrapTable("refresh");
+						      	  	  	});
+						      	  	}
+						      	});
+						  	}
+						  	
+					  	});
+					})
 				}
 			}
 		],

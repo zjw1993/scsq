@@ -6,9 +6,14 @@
 		
 		<link rel="stylesheet" href="../../plugin/bootstrap-3.3.7/css/bootstrap.min.css" />
 		<link rel="stylesheet" href="../../plugin/bootstrap-table/bootstrap-table.min.css" />
+		<link rel="stylesheet" href="../../plugin/bootstrap-multiselect/css/bootstrap-multiselect.css" />
 		<link rel="stylesheet" href="../../css/global.css" />
 
 		<title>用户管理</title>
+		
+		<style>
+			.multiselect-container.dropdown-menu{width: 100%;}
+		</style>
 		
 	</head>
 
@@ -75,12 +80,29 @@
 			</form>
 		</script>
 		
+		<script type="text/template" id="role-panel-templet">
+			<form>
+				<input type="hidden" class="form-control" name="userId" />
+				<div class="col-sm-12 form-group">
+					<label>用户名</label>
+					<input type="text" readonly="readonly" class="form-control" name="userName" placeholder="用户名">
+				</div>
+				<div class="col-sm-12 form-group">
+					<label>角色</label>
+					<select id="roleId" class="form-control multiselect" name="roleIds" multiple="multiple">
+					</select>
+				</div>
+				
+			</form>
+		</script>
+		
 	</body>
 
 	<script type="text/javascript" src="../../plugin/jquery/jquery-3.1.1.min.js"></script>
 	<script type="text/javascript" src="../../plugin/bootstrap-3.3.7/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="../../plugin/bootstrap-table/bootstrap-table.min.js" ></script>
 	<script type="text/javascript" src="../../plugin/bootstrap-table/bootstrap-table-zh-CN.js" ></script>
+	<script type="text/javascript" src="../../plugin/bootstrap-multiselect/js/bootstrap-multiselect.js" ></script>
 	<script type="text/javascript" src="../../plugin/layer/layer.js" ></script>
 	<script type="text/javascript" src="../../js/base/base.js" ></script>
 	<script type="text/javascript" src="../../js/base/page.js" ></script>

@@ -8,7 +8,7 @@
 		<link rel="stylesheet" href="../../plugin/bootstrap-table/bootstrap-table.min.css" />
 		<link rel="stylesheet" href="../../css/global.css" />
 
-		<title>菜单管理</title>
+		<title>子菜单管理</title>
 		
 	</head>
 
@@ -19,19 +19,11 @@
 					<div class="form-group">
 						<input type="text" class="form-control" placeholder="菜单名称" name="name">
 					</div>
-					<!--<select class="form-control" name="type">
-						<option value="">所有菜单类型</option>
-					  	<option value="1">菜单</option>
-					  	<option value="2">链接</option>
-					</select>-->
 					<buttontype="submit" class="btn btn-search">查询</button>
 				</form>
 			</div>
 			<div class="admin-content-toolbar">
-				<button id="back-parent-btn" class="btn btn-default btn-xs" onclick="Admin.menu.backToParent()" style="display: none;">
-					<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-					返回父菜单
-				</button>
+				
 			</div>
 		</div>
 		
@@ -68,26 +60,19 @@
 					<input type="text" class="form-control" name="url" placeholder="菜单url">
 				</div>
 				
-				<!--<div class="col-sm-4 form-group">
-					<label>菜单类型</label>
-					<select class="form-control" name="spread">
-					  	<option value="1">菜单</option>
-					  	<option value="2">链接</option>
-					</select>
-				</div>-->
 			</form>
 				
-			<form id="btns-form" style="display: none;">
+			<form id="btns-form" style="">
 				<div id="menu-btns-ctrl" class="col-sm-12 form-group">
 					<hr style="color: #ECECEC;margin: 0;height: 5px;"/>
 					<label>按钮列表</label>
-					<button onclick="Admin.menu.addMenuBtns()" id="add-menu-btn" type="button" class="btn btn-default btn-xs" style="margin-top: -5px;">
+					<button onclick="Admin.menu.addMenuBtnsEvent()" id="add-menu-btn" type="button" class="btn btn-default btn-xs" style="margin-top: -5px;">
 						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 						添加
 					</button>
 					(一个菜单对应的页面上的所有访问接口动作的都可以作为一个按钮配置在下方，当js中有注册对应btnType的按钮时，按钮会在页面上显示，否则只会作为url访问权限限制)
 				</div>
-				<!--<div name="menu-btn-group">
+				<div name="menu-btn-group">
 					<div class="col-sm-3 form-group">
 						<input type="text" class="form-control" name="btnName" placeholder="btnName,例：添加">
 					</div>
@@ -102,7 +87,7 @@
 							<span class="glyphicon glyphicon-trash"></span>
 						</button>
 					</div>
-				</div>-->
+				</div>
 			</form>
 		</script>
 		
@@ -115,6 +100,6 @@
 	<script type="text/javascript" src="../../plugin/layer/layer.js" ></script>
 	<script type="text/javascript" src="../../js/base/base.js" ></script>
 	<script type="text/javascript" src="../../js/base/page.js" ></script>
-	<script type="text/javascript" src="../../js/sys/menu.js" ></script>
+	<script type="text/javascript" src="../../js/sys/submenu.js" ></script>
 
 </html>

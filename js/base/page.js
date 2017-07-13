@@ -20,8 +20,9 @@ var Page = {
 	initToolbar: function(toolbar){
 		var _url = Admin.SERVER_URL + "/main/getActionBtn.do";
 		//var _url = Admin.STATIC_URL + "/datas/getActionBtn.json";
-		//console.log(window.location.href)
-		var _data = {'url': window.location.href};
+		//console.log("window.location.href="+window.location.href.replace(Admin.STATIC_URL, ''))
+		// /pages/sys/user.html
+		var _data = {'url': window.location.href.replace(Admin.STATIC_URL, '')};
 		
 		var newBars = [];
 		$.ajax(_url, {
@@ -68,7 +69,7 @@ var Page = {
 		});
 		var adminHeaderToolbar = $(".admin-content-toolbar");
 		if(adminHeaderToolbar) {
-			adminHeaderToolbar.empty();
+			//adminHeaderToolbar.empty();
 			adminHeaderToolbar.append(tbhtml);
 		}else {
 			var adminHeaderSearch = $(".admin-content-search");

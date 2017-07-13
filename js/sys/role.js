@@ -4,7 +4,8 @@ Admin.role = function(){
 	var saveUrl = Admin.SERVER_URL + "/role/save.do";
 	var editUrl = Admin.SERVER_URL + "/role/edit.do";
 	var deleteUrl = Admin.SERVER_URL + "/role/delete.do";
-	var authTreeUrl = Admin.SERVER_URL + "/main/authTree.do";
+	var authTreeUrl = Admin.SERVER_URL + "/role/authTree.do";
+	var saveAuth = Admin.SERVER_URL + "/role/saveAuth.do";
 
 	var $table = $('#table');
 
@@ -39,7 +40,7 @@ Admin.role = function(){
 				paginationPreText:"上一页",	// 上一页按钮显示文字 
 				paginationNextText: "下一页", // 下一页按钮显示文字
 				clickToSelect: true,		// 单击选中该行
-				singleSelect: false,		// 单选
+				singleSelect: true,		// 单选
 				checkboxHeader: true,		// 列头全选按钮
 			    columns: [{
 			        field: '',
@@ -164,6 +165,7 @@ Admin.role = function(){
 				btnType: "auth",
 				handler: function(){
 					Admin.checkSingleRow($table, function(row){
+						var roleId = row[0].id;
 						layer.open({
 						  	type: 1,
 						  	title: "角色权限分配",
@@ -171,10 +173,11 @@ Admin.role = function(){
 						  	shadeClose: false, //点击遮罩关闭
 						  	content: $("#auth-panel-templet").text(),
 						  	success:function(layero, index){
-						  		$(layero).find("input[name='roleId']").val(row[0].id);
+						  		$(layero).find("input[name='roleId']").val(roleId);
 						  		$(layero).find("input[name='roleName']").val(row[0].name);
-						  		Admin.progress("加载中请稍后...");
-						  		Admin.ajaxJson(authTreeUrl, {}, function(data){
+						  		Admin.progress("权限列表加载中,请稍后...");
+						  		Admin.ajaxJson(authTreeUrl, {roleId:roleId}, function(data){
+						  			console.log(data)
 						  			if(data.success) {
 						  				$('#tree').treeview({
 								  			data: data.data,
@@ -197,9 +200,6 @@ Admin.role = function(){
 						  	btn: ['提交'],
 						  	btnAlign: 'r',
 						  	yes:function(index, layero){
-						  	  	var $form = $(layero).find("form");
-						      	var param = $form.serialize();
-						      	//console.log(param)
 						      	
 						      	var rootNode = $('#tree').treeview('getNode', 0);
 						      	//console.log(rootNode)
@@ -208,7 +208,7 @@ Admin.role = function(){
 						      		$.each(rootNode.nodes, function(i, item){
 						      			if(item.state.checked){
 						      				var obj = {};
-						      				obj.text = item.text;
+						      				obj.roleId = roleId;
 						      				obj.objId = item.objId;
 						      				obj.relType = item.relType;
 						      				checked.push(obj);
@@ -217,7 +217,7 @@ Admin.role = function(){
 								      		$.each(item.nodes, function(i1, item1){
 								      			if(item1.state.checked){
 								      				var obj = {};
-								      				obj.text = item1.text;
+								      				obj.roleId = roleId;
 								      				obj.objId = item1.objId;
 								      				obj.relType = item1.relType;
 								      				checked.push(obj);
@@ -226,7 +226,7 @@ Admin.role = function(){
 										      		$.each(item1.nodes, function(i2, item2){
 										      			if(item2.state.checked){
 										      				var obj = {};
-										      				obj.text = item2.text;
+										      				obj.roleId = roleId;
 										      				obj.objId = item2.objId;
 										      				obj.relType = item2.relType;
 										      				checked.push(obj);
@@ -239,16 +239,16 @@ Admin.role = function(){
 						      	}
 						      	
 						      	console.log(checked)
-						      	// TODO
+						      	var params = {};
+						      	params.roleId = roleId;
+						      	params.roleRels = JSON.stringify(checked);
 						      	
-						      	/*Admin.ajaxJson(editUrl, param, function(data){
+						      	Admin.ajaxJson(saveAuth, params, function(data){
 						      	  	if(data.success) {
-						      	  	  	Admin.alert("提示", data.msg, 1, function(){
-						      	  	  	  	layer.close(index);
-						      	  	  	  	$table.bootstrapTable("refresh");
-						      	  	  	});
+						      	  		layer.close(index);
+						      	  	  	Admin.alert("提示", data.msg, 1);
 						      	  	}
-						      	});*/
+						      	});
 						  	}
 						  	
 					  	});
@@ -256,94 +256,7 @@ Admin.role = function(){
 				}
 			}
 		],
-		getTree: function(){
-			var tree = [
-				  {
-				    text: "系统管理",
-				    id: 111,
-				    nodes: [
-				      {
-				        text: "用户管理",
-					    nodes: [
-					      {
-					        text: "添加",
-					      },
-					      {
-					        text: "删除"
-					      },
-					      {
-					        text: "修改"
-					      }
-					    ]
-				      },
-				      {
-				        text: "菜单管理",
-				        nodes: [
-					      {
-					        text: "添加",
-					      },
-					      {
-					        text: "删除"
-					      },
-					      {
-					        text: "修改"
-					      }
-					    ]
-				      },
-				      {
-				        text: "角色管理",
-				        nodes: [
-					      {
-					        text: "添加",
-					      },
-					      {
-					        text: "删除"
-					      },
-					      {
-					        text: "修改"
-					      }
-					    ]
-				      }
-				    ]
-				  },
-				  {
-				    text: "报表管理",
-				    nodes: [
-				      {
-				        text: "月报表",
-				        nodes: [
-					      {
-					        text: "导出",
-					      },
-					      {
-					        text: "下载"
-					      },
-					      {
-					        text: "修改"
-					      }
-					    ]
-				      },
-				      {
-				        text: "周报表"
-				      },
-				      {
-				        text: "日报表"
-				      }
-				    ]
-				  },
-				  {
-				    text: "Parent 3"
-				  },
-				  {
-				    text: "Parent 4"
-				  },
-				  {
-				    text: "Parent 5"
-				  }
-				];
-			
-			return tree;
-		},
+		
 		
 		init : function(){
 			_this.initSearch();

@@ -3,9 +3,7 @@ var Admin = {
 	STATIC_URL: "http://127.0.0.1:8020/scsq",
 	SERVER_URL: "http://localhost:9875/admin",
 	
-	
 	ajaxJson: function(url, param, callback) {
-		//Admin.progress();
 		$.ajax(url, {
 			type: 'get',
 		 	dataType: 'json',
@@ -23,7 +21,43 @@ var Admin = {
 		 	},
 		 	error: function(response, textStatus, errorThrown){
 		 		try{
-		 			Admin.closeProgress();
+		 			var data = $.parseJSON(response.responseText);
+			 		//检查登录
+			 		if(!Admin.checkLogin(data)){
+			 			return false;
+			 		}else{
+				 		Admin.alert('提示', data.msg || "请求出现异常,请联系管理员", 2);
+				 	}
+		 		}catch(e){
+		 			console.info(e);
+		 			Admin.alert('提示', "请求出现异常,请联系管理员.", 2);
+		 		}
+		 	},
+		 	complete:function(){
+		 	
+		 	}
+		});
+	},
+	
+	ajaxJsonNew: function(url, param, async, callback) {
+		$.ajax(url, {
+			type: 'get',
+		 	dataType: 'json',
+		 	data: param,
+		 	async: async || true,  // 默认异步
+		 	xhrFields:{ withCredentials:true },
+		 	success: function(data){
+		 		Admin.closeProgress();
+		 		//坚持登录
+		 		/*if(!Admin.checkLogin(data)){
+		 			return false;
+		 		}*/
+		 		if($.isFunction(callback)){
+		 			callback(data);
+		 		}
+		 	},
+		 	error: function(response, textStatus, errorThrown){
+		 		try{
 		 			var data = $.parseJSON(response.responseText);
 			 		//检查登录
 			 		if(!Admin.checkLogin(data)){
@@ -43,7 +77,6 @@ var Admin = {
 	},
 	
 	ajaxHtml: function(url, param, callback){
-		/*Admin.progress();*/
 		$.ajax(url, {
 			type: 'post',
 		 	dataType: 'html',
@@ -73,7 +106,6 @@ var Admin = {
 	
 	checkLogin: function(data) { //检查是否登录超时
 		if(data.logoutFlag){
-			Admin.closeProgress();
 			Admin.alert('提示', "登录超时,点击确定重新登录.", 2, Admin.toLogin);
 			return false;
 		}
@@ -88,6 +120,10 @@ var Admin = {
  		}else{
  			layer.alert(msg, {title: title||'提示', icon: icon||1});
  		}
+	},
+	
+	warning: function(msg, callback){
+		Admin.alert("警告", msg, "", callback);
 	},
 	
 	confirm: function(msg, callback){
@@ -167,7 +203,7 @@ var Admin = {
 				$(item).val(data[item.name]);
 			}
 			// TODO
-		})
+		});
 	},
 	
 	checkAllTreeViewChilds: function($treeView, node){

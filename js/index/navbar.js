@@ -1,10 +1,9 @@
 /** navbar.js By Beginner Emain:zheng_jinfan@126.com HomePage:http://www.zhengjinfan.cn */
-layui.define(['element', 'common'], function(exports) {
+layui.define(['element'], function(exports) {
 	"use strict";
 	var $ = layui.jquery,
 		layer = parent.layer === undefined ? layui.layer : parent.layer,
 		element = layui.element(),
-		common = layui.common,
 		cacheName = 'tb_navbar';
 
 	var Navbar = function() {
@@ -25,7 +24,8 @@ layui.define(['element', 'common'], function(exports) {
 		var _that = this;
 		var _config = _that.config;
 		if(typeof(_config.elem) !== 'string' && typeof(_config.elem) !== 'object') {
-			common.throwError('Navbar error: elem参数未定义或设置出错，具体设置格式请参考文档API.');
+			//common.throwError('Navbar error: elem参数未定义或设置出错，具体设置格式请参考文档API.');
+			Admin.warning("Navbar error: elem参数未定义或设置出错，具体设置格式请参考文档API.");
 		}
 		var $container;
 		if(typeof(_config.elem) === 'string') {
@@ -35,10 +35,12 @@ layui.define(['element', 'common'], function(exports) {
 			$container = _config.elem;
 		}
 		if($container.length === 0) {
-			common.throwError('Navbar error:找不到elem参数配置的容器，请检查.');
+			//common.throwError('Navbar error:找不到elem参数配置的容器，请检查.');
+			Admin.warning("Navbar error:找不到elem参数配置的容器，请检查.");
 		}
 		if(_config.data === undefined && _config.url === undefined) {
-			common.throwError('Navbar error:请为Navbar配置数据源.')
+			//common.throwError('Navbar error:请为Navbar配置数据源.')
+			Admin.warning("Navbar error:请为Navbar配置数据源.");
 		}
 		if(_config.data !== undefined && typeof(_config.data) === 'object') {
 			var html = getHtml(_config.data);
@@ -66,7 +68,13 @@ layui.define(['element', 'common'], function(exports) {
 							element.init();
 						},
 						error: function(xhr, status, error) {
-							common.msgError('Navbar error:' + error);
+							//common.msgError('Navbar error:' + error);
+							var data = $.parseJSON(xhr.responseText);
+							if(!Admin.checkLogin(data)){
+					 			return false;
+					 		}else{
+					 			Admin.warning('Navbar error:' + error)
+					 		}
 						},
 						complete: function(xhr, status) {
 							_that.config.elem = $container;
@@ -93,7 +101,13 @@ layui.define(['element', 'common'], function(exports) {
 						element.init();
 					},
 					error: function(xhr, status, error) {
-						common.msgError('Navbar error:' + error);
+						//common.msgError('Navbar error:' + error);
+						var data = $.parseJSON(xhr.responseText);
+						if(!Admin.checkLogin(data)){
+				 			return false;
+				 		}else{
+							Admin.warning('Navbar error:' + error);
+						}
 					},
 					complete: function(xhr, status) {
 						_that.config.elem = $container;
@@ -107,7 +121,7 @@ layui.define(['element', 'common'], function(exports) {
 			var $ul = $container.children('ul');
 			$ul.find('li.layui-nav-item').each(function(){
 				$(this).on('click',function(){
-					$(this).siblings().removeClass('layui-nav-itemed');
+					//$(this).siblings().removeClass('layui-nav-itemed');
 				});
 			});
 		}
@@ -132,7 +146,8 @@ layui.define(['element', 'common'], function(exports) {
 		var that = this;
 		var _con = that.config.elem;
 		if(typeof(events) !== 'string') {
-			common.throwError('Navbar error:事件名配置出错，请参考API文档.');
+			//common.throwError('Navbar error:事件名配置出错，请参考API文档.');
+			Admin.warning('Navbar error:事件名配置出错，请参考API文档.')
 		}
 		var lIndex = events.indexOf('(');
 		var eventName = events.substr(0, lIndex);
@@ -228,7 +243,7 @@ layui.define(['element', 'common'], function(exports) {
 			} else {
 				var dataUrl = (data[i].href !== undefined && data[i].href !== '') ? 'data-url="' + data[i].href + '"' : '';
 				ulHtml += '<a href="javascript:;" ' + dataUrl + '>';
-				if(data[i].icon !== undefined && data[i].icon !== '') {
+				if(data[i].icon !== null && data[i].icon !== undefined && data[i].icon !== '') {
 					if(data[i].icon.indexOf('fa-') !== -1) {
 						ulHtml += '<i class="fa ' + data[i].icon + '" aria-hidden="true" data-icon="' + data[i].icon + '"></i>';
 					} else {

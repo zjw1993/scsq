@@ -3,15 +3,12 @@ Admin.menu = function(){
 	var dataListUrl = Admin.SERVER_URL + "/menu/dataList.do";
 	var subListUrl = Admin.SERVER_URL + "/menu/subList.do";
 	var saveUrl = Admin.SERVER_URL + "/menu/save.do";
-	var btnsUrl = Admin.SERVER_URL + "/menu/btnList.do";
+	var editUrl = Admin.SERVER_URL + "/menu/edit.do";
 	var deleteUrl = Admin.SERVER_URL + "/menu/delete.do";
 	
 	var $table = $('#table');
 	
 	var _this = {
-		parentId : 0,
-		parentName : "",
-		
 		initSearch: function(){
 			$(".admin-content-search .btn-search").bind('click', function(){
 				$table.bootstrapTable('refresh');
@@ -46,6 +43,15 @@ Admin.menu = function(){
 				clickToSelect: true,		// 单击选中该行
 				singleSelect: true,		// 单选
 				checkboxHeader: false,		// 列头全选按钮
+				detailView: true,
+				onExpandRow: function (index, row, $detail) {
+                    _this.InitSubTable(index, row, $detail);
+                },
+                onCheck: function(row){
+					console.log("check row")
+					console.log(row)
+					//$table.bootstrapTable('uncheckAll');
+				},
 			    columns: [{
 			        field: '',
 			        title: '',
@@ -53,10 +59,22 @@ Admin.menu = function(){
 			    }, {
 			        field: 'id',
 			        title: 'ID',
+			        width: '100px',
 			        align: 'center'
 			    }, {
 			        field: 'name',
 			        title: '菜单名称',
+			        width: '100px',
+			        align: 'center'
+			    }, {
+			        field: 'url',
+			        title: '菜单链接',
+			        width: '200px',
+			        align: 'center'
+			    }, {
+			        field: 'parentId',
+			        title: '父级菜单ID',
+			        width: '100px',
 			        align: 'center'
 			    }, {
 			        field: 'spread',
@@ -79,41 +97,30 @@ Admin.menu = function(){
 			        title: '创建时间',
 			        width: '',
 			        align: 'center'
-			    }, {
-			    	field: 'childNum',
-			    	title: '子菜单',
-			    	align: 'center',
-			    	formatter: function(val, row){
-			    		return '<a href="javascript:void(0)" ' +
-			    				  'onClick="Admin.menu.initSubTable('+ row.id +',\''+row.name+'\')">' +
-			    				  '子菜单数量('+ val +')' +
-			    			   '</a>';
-			    	}
 			    }]
 			    
 			});
 		},
 		
+		subTableParentId:"",
 		getSubData : function(params){
 			var parameters = params.data;
-			parameters.parentId = _this.parentId;
+			parameters.parentId = subTableParentId;
 			
 			Admin.ajaxJson(subListUrl, parameters, function(data){
 				params.success(data.rows)
 			});
 		},
 		
-		initSubTable : function (pid, pname) {
-			console.log(pid + "--" + pname)
-			$("#back-parent-btn").css('display', '');  // 返回按钮
-			_this.parentId = pid;
-			_this.parentName = pname;
-			$table.bootstrapTable('destroy');
-	        $table.bootstrapTable({
+		InitSubTable : function (index, row, $detail) {
+			subTableParentId = row.id;
+//	        var _this.subTableParentId = row.id;
+	        var cur_table = $detail.html('<table name="detail-table"></table>').find('table');
+	        $(cur_table).bootstrapTable({
 	            ajax: _this.getSubData,    	// 自定义ajax获取数据
 				undefinedText: "-",   		// undefined字段默认显示
 				clickToSelect: true,		// 单击选中该行
-				singleSelect: true,			// 单选
+				singleSelect: true,		// 单选
 				checkboxHeader: false,		// 列头全选按钮
 				onCheck: function(cr){
 					console.log("check cr")
@@ -127,15 +134,34 @@ Admin.menu = function(){
 			    }, {
 			        field: 'id',
 			        title: 'ID',
+			        width: '122px',
 			        align: 'center'
 			    }, {
 			        field: 'name',
 			        title: '菜单名称',
+			        width: '100px',
 			        align: 'center'
 			    }, {
 			        field: 'url',
 			        title: '菜单链接',
+			        width: '200px',
 			        align: 'center'
+			    }, {
+			        field: 'parentId',
+			        title: '父级菜单ID',
+			        width: '100px',
+			        align: 'center'
+			    }, {
+			        field: 'spread',
+			        title: '默认展开',
+			        align: 'center',
+			        formatter: function(val){
+			        	if(val == 0){
+			        		return "否";
+			        	}else{
+			        		return "是";
+			        	}
+			        }
 			    }, {
 			        field: 'rank',
 			        title: '排序',
@@ -146,45 +172,20 @@ Admin.menu = function(){
 			        title: '创建时间',
 			        width: '',
 			        align: 'center'
-			    }]
+			    }],
+			    onCheck: function(row){
+			    	
+			    }
 	        });
 	    },
-		
-		submitMenuEditForm: function(index, layero){
-			var $menuForm = $("#menu-form");
-		    var menuParam = $menuForm.serialize();
-		    
-		    var btngroups = $("#btns-form").find("div[name='menu-btn-group']");
-		    var btnArr = new Array();
-		    if(btngroups != null && btngroups.length > 0) {
-		    	$.each(btngroups, function(i, btngroup){
-		    		var btn = {};
-		    		btn.btnName = $(btngroup).find("input[name='btnName']").val();
-		    		btn.btnType = $(btngroup).find("input[name='btnType']").val();
-		    		btn.actionUrls = $(btngroup).find("input[name='actionUrls']").val();
-		    		btnArr.push(btn);
-		    	})
-		    }
-		    menuParam = menuParam + "&btnsArr=" + JSON.stringify(btnArr);
-		    
-		    Admin.ajaxJson(saveUrl , menuParam, function(data){
-		      	if(data.success) {
-		      	  	Admin.alert("提示", data.msg, 1, function(){
-		      	  	  	layer.close(index);
-		      	  	  	$table.bootstrapTable("refresh");
-		      	  	});
-		      	}else{
-		      	  	Admin.alert("提示", data.msg, 1)
-		      	}
-		    });
-		},
 		
 		toolbar : [
 			{
 				name: "添加",
 				icon: "save",
-				btnType: "add",
+				btnType: "btnAdd",
 				handler: function(){
+					console.log($("table"))
 					layer.open({
 						type: 1,
 						title: "添加菜单",
@@ -192,21 +193,44 @@ Admin.menu = function(){
 						shadeClose: false, //点击遮罩关闭
 						content: $("#edit-panel-templet").text(),
 						success:function(layero, index){
-							//var row = $table.bootstrapTable('getSelections');
-							if(_this.parentId && _this.parentId != 0) {
-								$(layero).find("form").find("input[name='parentId']").val(_this.parentId);
-						  		$(layero).find("form").find("input[name='pName']").val(_this.parentName);
+							var row = $table.bootstrapTable('getSelections');
+							if(row && row.length > 0) {
+								$(layero).find("form").find("input[name='parentId']").val(row[0].id);
+						  		$(layero).find("form").find("input[name='pName']").val(row[0].name);
 						  		$(layero).find("form").find("select[name='spread']").parent().css('display', 'none');
-						  		$("#btns-form").css("display", "");
+						  		$("#btn-form").css("display", "");
 							}else{
-								$(layero).find("form").find("input[name='pName']").parent().css('display', 'none');
 								$(layero).find("form").find("input[name='url']").parent().css('display', 'none');
 							}
-							_this.addMenuBtns();
 						},
 						btn: ['保存'],
 						yes:function(index, layero){
-						  	_this.submitMenuEditForm(index, layero);
+						  	var $menuForm = $("#menu-form");
+						    var menuParam = $menuForm.serialize();
+						    
+						    var btngroups = $("#btns-form").find("div[name='menu-btn-group']");
+						    var btnArr = new Array();
+						    if(btngroups != null && btngroups.length > 0) {
+						    	$.each(btngroups, function(i, btngroup){
+						    		var btn = {};
+						    		btn.btnName = $(btngroup).find("input[name='btnName']").val();
+						    		btn.btnType = $(btngroup).find("input[name='btnType']").val();
+						    		btn.actionUrls = $(btngroup).find("input[name='actionUrls']").val();
+						    		btnArr.push(btn);
+						    	})
+						    }
+						    menuParam = menuParam + "&btnsArr=" + JSON.stringify(btnArr);
+						    
+						    Admin.ajaxJson(saveUrl , menuParam, function(data){
+						      	if(data.success) {
+						      	  	Admin.alert("提示", data.msg, 1, function(){
+						      	  	  	layer.close(index);
+						      	  	  	$table.bootstrapTable("refresh");
+						      	  	});
+						      	}else{
+						      	  	Admin.alert("提示", data.msg, 1)
+						      	}
+						    });
 						}
 					});
 					
@@ -215,10 +239,9 @@ Admin.menu = function(){
 			{
 				name: "修改",
 				icon: "edit",
-				btnType: "edit",
+				btnType: "btnEdit",
 				handler: function(){
 					Admin.checkSingleRow($table, function(row){
-						console.log(row[0])
 						layer.open({
 						  	type: 1,
 						  	title: "编辑菜单",
@@ -226,33 +249,34 @@ Admin.menu = function(){
 						  	shadeClose: false, //点击遮罩关闭
 						  	content: $("#edit-panel-templet").text(),
 						  	success:function(layero, index){
-						  		var $form = $(layero).find("#menu-form");
+						  		var $form = $(layero).find("form");
 						  		Admin.fillForm($form, row[0]);
-						  		$(layero).find("form").find("select[name='spread']").val(Number(row[0].spread));
 						  		
-						  		if(_this.parentId && _this.parentId != 0) {
-									$(layero).find("form").find("input[name='parentId']").val(_this.parentId);
-							  		$(layero).find("form").find("input[name='pName']").val(_this.parentName);
-							  		$(layero).find("form").find("select[name='spread']").parent().css('display', 'none');
-							  		$("#btns-form").css("display", "");
-							  		Admin.progress();
-									Admin.ajaxJson(btnsUrl, {menuId:row[0].id}, function(data){
-							      	  	if(data.success && data.btns && data.btns.length > 0) {
-							      	  	  	$.each(data.btns, function(i, item){
-							      	  	  		_this.addMenuBtns(item);
-							      	  	  	})
-							      	  	}
-							      	});
+						  		var row = $table.bootstrapTable('getSelections');
+								if(row && row.length > 0) {
+									$form.find("input[name='parentId']").val(row[0].id);
+							  		$form.find("input[name='pName']").val(row[0].name);
+							  		$form.find("select[name='spread']").parent().css('display', 'none');
+							  		$("#btn-form").css("display", "");
 								}else{
-									$(layero).find("form").find("input[name='pName']").parent().css('display', 'none');
-									$(layero).find("form").find("input[name='url']").parent().css('display', 'none');
+									$form.find("input[name='url']").parent().css('display', 'none');
 								}
 						  	},
 						  	btn: ['提交'],
 						  	btnAlign: 'r',
 						  	yes:function(index, layero){
-						  	  	_this.submitMenuEditForm(index, layero);
+						  	  	var $form = $(layero).find("form");
+						      	var param = $form.serialize();
+						      	Admin.ajaxJson(editUrl, param, function(data){
+						      	  	if(data.success) {
+						      	  	  	Admin.alert("提示", data.msg, 1, function(){
+						      	  	  	  	layer.close(index);
+						      	  	  	  	$table.bootstrapTable("refresh");
+						      	  	  	});
+						      	  	}
+						      	});
 						  	}
+						  	
 					  	});
 					})
 					
@@ -261,7 +285,7 @@ Admin.menu = function(){
 			{
 				name: "删除",
 				icon: "delete",
-				btnType: "delete",
+				btnType: "benDelete",
 				handler: function(){
 					Admin.checkSingleRow($table, function(row){
 						console.log(row[0].id)
@@ -281,33 +305,17 @@ Admin.menu = function(){
 			}
 		],
 		
-		backToParent: function(){
-			$("#back-parent-btn").css('display', 'none');
-			_this.parentId = 0;
-			_this.parentName = "";
-			$table.bootstrapTable('destroy');
-			_this.initTable();
-		},
-		
-		addMenuBtns: function(btnData){
-			var btnNameVal = '';
-			var btnTypeVal = '';
-			var actionUrlsVal = '';
-			if(btnData !== null && btnData!== undefined && btnData !== ''){
-				btnNameVal = 'value="'+btnData.btnName+'"';
-				btnTypeVal = 'value="'+btnData.btnType+'"';
-				actionUrlsVal = 'value="'+btnData.actionUrls+'"';
-			}
+		addMenuBtnsEvent: function(){
 			var html = '';
 			html += '<div name="menu-btn-group">';
 			html += 	'<div class="col-sm-3 form-group">';
-			html += 		'<input type="text" class="form-control" name="btnName" placeholder="btnName,例：添加" '+btnNameVal+'>';
+			html += 		'<input type="text" class="form-control" name="btnName" placeholder="btnName,例：添加">';
 			html += 	'</div>';
 			html += 	'<div class="col-sm-3 form-group">';
-			html += 		'<input type="text" class="form-control" name="btnType" placeholder="btnType,例：add" '+btnTypeVal+'>';
+			html += 		'<input type="text" class="form-control" name="btnType" placeholder="btnType,例：add">';
 			html += 	'</div>';
 			html += 	'<div class="col-sm-5 form-group">';
-			html += 		'<input type="text" class="form-control" name="actionUrls" placeholder="actionUrls,例：/user/save.do" '+actionUrlsVal+'>';
+			html += 		'<input type="text" class="form-control" name="actionUrls" placeholder="actionUrls,例：/user/save.do">';
 			html += 	'</div>';
 			html += 	'<div class="col-sm-1 form-group" style="">';
 			html += 		'<button onclick="Admin.menu.removeMenuBtnsEvent(this)" type="button" class="btn btn-default btn-sm">';
