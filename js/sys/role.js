@@ -40,7 +40,7 @@ Admin.role = function(){
 				paginationPreText:"上一页",	// 上一页按钮显示文字 
 				paginationNextText: "下一页", // 下一页按钮显示文字
 				clickToSelect: true,		// 单击选中该行
-				singleSelect: true,		// 单选
+				singleSelect: true,			// 单选
 				checkboxHeader: true,		// 列头全选按钮
 			    columns: [{
 			        field: '',
@@ -71,6 +71,44 @@ Admin.role = function(){
 			});
 		},
 		
+		editFormValid: {
+			rules:{
+				name:{
+					required: true,
+					maxlength: 15
+				},
+				description:{
+					maxlength: 30
+				}
+			}
+		},
+		
+		submitEditForm: function(index, layero){
+			var $form = $(layero).find("form");
+			if(!Admin.validForm($form, _this.editFormValid, ":hidden")){
+		  		return;
+		  	}
+			
+	      	var param = $form.serialize();
+	      	
+	      	var reqUrl = "";
+	      	if($form.find("input[name='id']").val()) {
+	      		reqUrl = editUrl;
+	      	}else{
+	      		reqUrl = saveUrl;
+	      	}
+	      	Admin.ajaxJson(reqUrl, param, function(data){
+	      	  	if(data.success) {
+	      	  	  	Admin.alert("提示", data.msg, 1, function(){
+	      	  	  	  	layer.close(index);
+	      	  	  	  	$table.bootstrapTable("refresh");
+	      	  	  	});
+	      	  	}else{
+	      	  		Admin.alert("提示", data.msg, 1)
+	      	  	}
+	      	});
+		},
+		
 		toolbar : [
 			{
 				name: "添加",
@@ -86,18 +124,7 @@ Admin.role = function(){
 						  btnAlign: 'r',
 						  btn: ['保存'],
 						  yes:function(index, layero){
-						  	  var $form = $(layero).find("form");
-						      var param = $form.serialize();
-						      Admin.ajaxJson(saveUrl, param, function(data){
-						      	  if(data.success) {
-						      	  	  Admin.alert("提示", data.msg, 1, function(){
-						      	  	  	  layer.close(index);
-						      	  	  	  $table.bootstrapTable("refresh");
-						      	  	  });
-						      	  }else{
-						      	  	Admin.alert("提示", data.msg, 1)
-						      	  }
-						      });
+						  	  _this.submitEditForm(index, layero);
 						  }
 					  });
 				}
@@ -121,16 +148,7 @@ Admin.role = function(){
 						  	btn: ['提交'],
 						  	btnAlign: 'r',
 						  	yes:function(index, layero){
-						  	  	var $form = $(layero).find("form");
-						      	var param = $form.serialize();
-						      	Admin.ajaxJson(editUrl, param, function(data){
-						      	  	if(data.success) {
-						      	  	  	Admin.alert("提示", data.msg, 1, function(){
-						      	  	  	  	layer.close(index);
-						      	  	  	  	$table.bootstrapTable("refresh");
-						      	  	  	});
-						      	  	}
-						      	});
+						  	  	_this.submitEditForm(index, layero);
 						  	}
 						  	
 					  	});

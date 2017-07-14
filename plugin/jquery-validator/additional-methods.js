@@ -995,8 +995,22 @@ $.validator.addMethod("ziprange", function(value, element) {
 	return this.optional(element) || /^90[2-5]\d\{2\}-\d{4}$/.test(value);
 }, "Your ZIP-code must be in the range 902xx-xxxx to 905xx-xxxx");
 
+
+/**************************************************************************/
+/************   				自定义部分                            			   ************/
+/**************************************************************************/
+
+// 手机号码
 $.validator.addMethod("mobilePhone", function(value, element) {
 	return this.optional(element) || /^1[0-9]{10}$/.test(value);
 }, "请输入正确的手机号码");
+
+// 只能英文
+$.validator.addMethod("justEn", function(value, element) {
+	return this.optional(element) || /^[A-Za-z]+$/.test(value);
+}, "只能输入26个英文字母组成的字符串");
+
+
+
 
 }));

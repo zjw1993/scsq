@@ -115,11 +115,6 @@ Admin.menu = function(){
 				clickToSelect: true,		// 单击选中该行
 				singleSelect: true,			// 单选
 				checkboxHeader: false,		// 列头全选按钮
-				onCheck: function(cr){
-					console.log("check cr")
-					console.log(cr)
-					//$table.bootstrapTable('uncheckAll');
-				},
 			    columns: [{
 			        field: '',
 			        title: '',
@@ -150,11 +145,53 @@ Admin.menu = function(){
 	        });
 	    },
 		
+		menuValid:{
+			rules:{
+				name:{
+					required: true,
+					maxlength: 15
+				},
+				rank:{
+					required: true,
+					range:[0, 10000]
+				},
+				url:{
+					required: true,
+					maxlength: 200
+				}
+			}
+		},
+		
+		btnsValid:{
+			rules:{
+				btnName:{
+					required: true,
+					maxlength: 15
+				},
+				btnType:{
+					required:true,
+					justEn: true,
+					maxlength: 20
+				},
+				actionUrls:{
+					required:true,
+					maxlength:200
+				}
+			}
+		},
+		
 		submitMenuEditForm: function(index, layero){
 			var $menuForm = $("#menu-form");
+			var $btnsForm = $("#btns-form");
+			if(!Admin.validForm($menuForm, _this.menuValid, ":hidden")){
+				return;
+			}
+			if(!Admin.validForm($btnsForm, _this.btnsValid)){
+				return;
+			}
 		    var menuParam = $menuForm.serialize();
 		    
-		    var btngroups = $("#btns-form").find("div[name='menu-btn-group']");
+		    var btngroups = $btnsForm.find("div[name='menu-btn-group']");
 		    var btnArr = new Array();
 		    if(btngroups != null && btngroups.length > 0) {
 		    	$.each(btngroups, function(i, btngroup){
@@ -162,7 +199,9 @@ Admin.menu = function(){
 		    		btn.btnName = $(btngroup).find("input[name='btnName']").val();
 		    		btn.btnType = $(btngroup).find("input[name='btnType']").val();
 		    		btn.actionUrls = $(btngroup).find("input[name='actionUrls']").val();
-		    		btnArr.push(btn);
+		    		if(btn.btnName != null && btn.btnName != '' && btn.btnName != undefined){
+		    			btnArr.push(btn);
+		    		}
 		    	})
 		    }
 		    menuParam = menuParam + "&btnsArr=" + JSON.stringify(btnArr);
@@ -310,7 +349,7 @@ Admin.menu = function(){
 			html += 		'<input type="text" class="form-control" name="actionUrls" placeholder="actionUrls,例：/user/save.do" '+actionUrlsVal+'>';
 			html += 	'</div>';
 			html += 	'<div class="col-sm-1 form-group" style="">';
-			html += 		'<button onclick="Admin.menu.removeMenuBtnsEvent(this)" type="button" class="btn btn-default btn-sm">';
+			html += 		'<button onclick="Admin.menu.removeMenuBtnGroup(this)" type="button" class="btn btn-default btn-sm">';
 			html += 			'<span class="glyphicon glyphicon-trash"></span>';
 			html += 		'</button>';
 			html += 	'</div>';
@@ -318,7 +357,8 @@ Admin.menu = function(){
 			
 			$("#btns-form").append(html);
 		},
-		removeMenuBtnsEvent: function(button){
+		
+		removeMenuBtnGroup: function(button){
 			$(button).parent().parent().remove();
 		},
 		

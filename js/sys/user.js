@@ -31,7 +31,7 @@ Admin.user = function(){
 			$table.bootstrapTable({
 				ajax: _this.getData,    	// 自定义ajax获取数据
 				undefinedText: "未知",   		// undefined字段默认显示
-				//striped: false,				// 隔行变色效果
+				//striped: false,			// 隔行变色效果
 				pagination: true,			// 显示分页
 				paginationVAlign: "bottom", // 分页条显示位置
 				sidePagination: "server",	// 分页数据来源  server服务器
@@ -42,14 +42,8 @@ Admin.user = function(){
 				paginationPreText:"上一页",	// 上一页按钮显示文字 
 				paginationNextText: "下一页", // 下一页按钮显示文字
 				clickToSelect: true,		// 单击选中该行
-				singleSelect: true,		// 单选
+				singleSelect: true,			// 单选
 				checkboxHeader: true,		// 列头全选按钮
-				//maintainSelected: true,	// 在点击分页按钮或搜索按钮时，将记住checkbox的选择项
-				//silentSort: true,			// 点击分页按钮时，记住排序
-				//detailView: true,
-				//detailFormatter: function(index, row){
-				//	return row.userName + "</br>" + row.mobile;
-				//},
 			    columns: [{
 			        field: '',
 			        title: '',
@@ -183,6 +177,14 @@ Admin.user = function(){
 						  	btnAlign: 'r',
 						  	yes:function(index, layero){
 						  	  	var $form = $(layero).find("form");
+						  	  	var ignore = "";
+						  	  	// 如果密码和源密码一样，则忽略不验证
+						  	  	if($form.find("input[name='password']").val() === row[0].password){
+						  	  		ignore = ".password";
+						  	  	}
+						  	  	if(!Admin.validForm($form, _this.editFormValidConf, ignore)){
+							  		return;
+							  	}
 						      	var param = $form.serialize();
 						      	Admin.ajaxJson(editUrl, param, function(data){
 						      	  	if(data.success) {
@@ -302,9 +304,10 @@ Admin.user = function(){
 		
 		init : function(){
 			_this.initSearch();
-			_this.initTable();
+			
 			Page.initToolbar(_this.toolbar);
 			
+			_this.initTable();
 		}
 	};
 	

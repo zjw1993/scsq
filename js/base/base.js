@@ -154,11 +154,11 @@ var Admin = {
 	
 	/**
 	 * 检查已选择一行并且只能是一行数据， 成功则执行回调
-	 * @param {Object} $table
+	 * @param {Object} table
 	 * @param {Object} callback
 	 */
-	checkSingleRow: function($table, callback){
-		var row = $table.bootstrapTable('getSelections');
+	checkSingleRow: function(table, callback){
+		var row = $(table).bootstrapTable('getSelections');
 		if(!row.length){
 			Admin.alert("温馨提示", "请先选择要操作的数据", 7);
 			return false;
@@ -174,11 +174,11 @@ var Admin = {
 	
 	/**
 	 * 检查是否选择一行或者一行以上的数据， 成功则执行回调
-	 * @param {Object} $table
+	 * @param {Object} table
 	 * @param {Object} callback
 	 */
-	checkSelectRows: function($table, callback){
-		var row = $table.bootstrapTable('getSelections');
+	checkSelectRows: function(table, callback){
+		var row = $(table).bootstrapTable('getSelections');
 		if(!row.length){
 			Admin.alert("温馨提示", "请至少选择一行", 7);
 			return false;
@@ -190,11 +190,11 @@ var Admin = {
 	
 	/**
 	 * 根据表单组件name 从data中取对应值填充val
-	 * @param {Object} $form
+	 * @param {Object} form
 	 * @param {Object} data
 	 */
-	fillForm: function($form, data){
-		var inputs = $form.find(".form-control");
+	fillForm: function(form, data){
+		var inputs = $(form).find(".form-control");
 		$.each(inputs, function(index, item){
 			if(item.tagName == 'INPUT') {
 				$(item).val((data[item.name])||'');
@@ -205,15 +205,26 @@ var Admin = {
 			// TODO
 		});
 	},
-	resetForm($form){
-		$form[0].reset();
+	
+	/**
+	 * 清除表单数据
+	 * @param {Object} form
+	 */
+	resetForm: function(form){
+		$(form)[0].reset();
 	},
 	
-	validForm(form, config){
+	/**
+	 * 表单验证，使用 jquery-validator
+	 * @param {Object} form 表单jq对象或者 选择器
+	 * @param {Object} config rules
+	 * @param {Object} ignore 
+	 */
+	validForm: function(form, config, ignore){
 		$(form).validate({
 	  		rules: config.rules,
 	  		messages: config.messages,
-	  		focusInvalid: true,
+	  		ignore: ignore,
 	  		errorPlacement: function (error, element) {
                 if ($(element).next("div").hasClass("tooltip")) {
                     $(element).attr("data-original-title", $(error).text()).tooltip("show");
@@ -228,19 +239,30 @@ var Admin = {
 	  	return $(form).valid();
 	},
 	
-	checkAllTreeViewChilds: function($treeView, node){
+	/**
+	 * treeview选中节点的时候选中其全部子节点
+	 * @param {Object} treeView
+	 * @param {Object} node
+	 */
+	checkAllTreeViewChilds: function(treeView, node){
 		if(node.nodes != null) {
 			$.each(node.nodes, function(i, item){
-				$treeView.treeview('checkNode', [item.nodeId, {silent: true}]);
-				Admin.checkAllTreeViewChilds($treeView, item);
+				$(treeView).treeview('checkNode', [item.nodeId, {silent: true}]);
+				Admin.checkAllTreeViewChilds(treeView, item);
 			})
 		}
 	},
-	unCheckAllTreeViewChilds: function($treeView, node){
+	
+	/**
+	 * treeview节点取消选择的时候取消其所有子节点的选中状态
+	 * @param {Object} treeView
+	 * @param {Object} node
+	 */
+	unCheckAllTreeViewChilds: function(treeView, node){
 		if(node.nodes != null) {
 			$.each(node.nodes, function(i, item){
-				$treeView.treeview('uncheckNode', [item.nodeId, {silent: true}]);
-				Admin.unCheckAllTreeViewChilds($treeView, item);
+				$(treeView).treeview('uncheckNode', [item.nodeId, {silent: true}]);
+				Admin.unCheckAllTreeViewChilds(treeView, item);
 			})
 		}
 	},
