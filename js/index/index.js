@@ -35,7 +35,7 @@ layui.config({
 		cached: true,
 		//data: data.navs
 		cached:false,
-		url: 'http://localhost:9875/admin/main/getMenuList.do'
+		url: Admin.SERVER_URL + '/main/getMenuList.do'
 	});
 	
 	//渲染navbar
